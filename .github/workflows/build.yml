@@ -1,0 +1,43 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "main", "master" ] # Führt den Build bei jedem Push aus
+  release:
+    types: [created] # Lädt die JAR hoch, wenn du ein Release erstellst
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21 # Oder 21, je nachdem was dein Plugin nutzt
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      # Schritt A: Speichert die JAR als "Artifact" (bei jedem Commit sichtbar)
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Plugin-Jar
+          path: build/libs/*.jar
+
+      # Schritt B: Wenn es ein offizielles Release ist, hänge die Datei an das Release an
+      - name: Upload Release Asset
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/libs/*.jar
