@@ -29,6 +29,7 @@ This project is under active development. My goal is to evolve it from a solid c
 - [ ] **Update Checker & Notifier** (Keep the server up to date via GitHub API)
 - [ ] **Configurable Block Types** (Support for custom log types)
 - [ ] **Direct Inventory Dropping** (Drop logs directly into the player's inventory instead of the ground)
+- [ ] **Speed Control** (Adjust the speed of tree felling for balance and performance)
 
 ---
 *(Yes, I was too lazy to write this text)*
