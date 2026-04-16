@@ -2,6 +2,7 @@ package user.meistertisch.treeCapitator.event;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,8 +16,7 @@ public class EventBlockBreak implements Listener {
     public void onBlockBreak(BlockBreakEvent event){
         Material blockType = event.getBlock().getType();
 
-        // TODO: Change Check to block tag check instead of material
-        if(blockType == Material.OAK_LOG) {
+        if(Tag.LOGS.isTagged(blockType)) {
             destroyBlock(event.getBlock(), event.getPlayer().getInventory().getItemInMainHand());
         }
     }
@@ -28,6 +28,7 @@ public class EventBlockBreak implements Listener {
             return;
         }
 
+        // Limit for calls; TODO: Change to variable
         if(i>100){
             return;
         }
