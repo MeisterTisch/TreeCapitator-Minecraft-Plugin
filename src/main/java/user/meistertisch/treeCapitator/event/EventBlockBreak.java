@@ -1,13 +1,14 @@
 package user.meistertisch.treeCapitator.event;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Tag;
+import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import user.meistertisch.treeCapitator.TreeCapitator;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,16 +17,39 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class EventBlockBreak implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
-        Material blockType = event.getBlock().getType();
+        Block block = event.getBlock();
+        Material blockType = block.getType();
 
-        AtomicInteger counter = new AtomicInteger(32); // TODO: Change value to variable
-        if(Tag.LOGS.isTagged(blockType)) {
-            destroyBlock(event.getBlock(), event.getPlayer().getInventory().getItemInMainHand(), counter);
+        // Is block a log?
+        if (!Tag.LOGS.isTagged(blockType)) {
+            return;
         }
+
+        Player player = event.getPlayer();
+
+        // Is player in survival
+        if (player.getGameMode() != GameMode.SURVIVAL) {
+            return;
+        }
+
+        ItemStack tool = player.getInventory().getItemInMainHand();
+
+        // Has player an axe?
+        if (!Tag.ITEMS_AXES.isTagged(tool.getType())) {
+            return;
+        }
+
+        AtomicInteger counter = new AtomicInteger(32);
+        destroyBlock(player, block, tool, counter);
     }
 
-    private void destroyBlock(Block block, ItemStack tool, AtomicInteger counter){
-        // Return if block is air
+    private void destroyBlock(Player player, Block block, ItemStack tool, AtomicInteger counter){
+        // Return if player switched tool during the process
+        if (!player.getInventory().getItemInMainHand().equals(tool)) {
+            return;
+        }
+
+        // Return if counter is above limit or block is air
         if(counter.decrementAndGet() < 0 || block.getType().isAir()){
             return;
         }
@@ -33,7 +57,8 @@ public class EventBlockBreak implements Listener {
         // Safe block type for later check
         Material blockType = block.getType();
 
-        block.breakNaturally(tool, true, true); // TODO: Durability not reducing yet
+        block.breakNaturally(tool, true, true);
+        damageItem(player, tool);
 
         for (int y = -1; y <= 1; y++) {
             for (int z = -1; z <= 1; z++) {
@@ -46,10 +71,25 @@ public class EventBlockBreak implements Listener {
                     // Get relatives, check for same type as original block. If same, recursive call of methode with delay for smooth gameplay
                     Block neighborBlock = block.getRelative(x, y, z);
                     if (neighborBlock.getType() == blockType) {
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(TreeCapitator.getPlugin(), () -> destroyBlock(neighborBlock, tool, counter),
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(TreeCapitator.getPlugin(), () -> destroyBlock(player, neighborBlock, tool, counter),
                                 5+5*(Math.abs(x) +  Math.abs(y) + Math.abs(z))); // The outer the block, the later it breaks; TODO: Make Speed variable for user preferences
                     }
                 }
+            }
+        }
+    }
+
+    private void damageItem(Player player, ItemStack tool) {
+        ItemMeta meta = tool.getItemMeta();
+        if (meta instanceof Damageable damageable) {
+            // Add damage
+            damageable.setDamage(damageable.getDamage() + 1);
+            tool.setItemMeta(damageable);
+
+            // Item breaks
+            if (damageable.getDamage() >= tool.getType().getMaxDurability()) {
+                player.getInventory().setItemInMainHand(null);
+                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
             }
         }
     }
