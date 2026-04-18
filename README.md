@@ -31,6 +31,7 @@ This project is under active development. My goal is to evolve it from a solid c
 - [ ] **Configurable Block Types** (Support for custom log types)
 - [ ] **Direct Inventory Dropping** (Drop logs directly into the player's inventory instead of the ground)
 - [ ] **Speed Control** (Adjust the speed of tree felling for balance and performance)
+- [ ] **Crouch Option** (Toggle if tree falling should only occur when crouching, or the opposite)
 
 ---
 *(Yes, I was too lazy to write this text)*
