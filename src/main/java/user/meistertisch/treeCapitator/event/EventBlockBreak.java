@@ -27,23 +27,26 @@ public class EventBlockBreak implements Listener {
 
         Player player = event.getPlayer();
 
-        // Is player in survival
+        // Is player in survival; TODO: Replace with variable setting
         if (player.getGameMode() != GameMode.SURVIVAL) {
             return;
         }
 
         ItemStack tool = player.getInventory().getItemInMainHand();
 
-        // Has player an axe?
+        // Has player an axe?; TODO: Replace with variable setting (allowing other tools/hand)
         if (!Tag.ITEMS_AXES.isTagged(tool.getType())) {
             return;
         }
 
-        AtomicInteger counter = new AtomicInteger(32);
+        int limit = TreeCapitator.getPlugin().getConfig().getInt("limit", 64);
+        AtomicInteger counter = new AtomicInteger(limit);
         destroyBlock(player, block, tool, counter);
     }
 
     private void destroyBlock(Player player, Block block, ItemStack tool, AtomicInteger counter){
+        System.out.println(counter.get());
+
         // Return if player switched tool during the process
         if (!player.getInventory().getItemInMainHand().equals(tool)) {
             return;
@@ -72,8 +75,8 @@ public class EventBlockBreak implements Listener {
                     Block neighborBlock = block.getRelative(x, y, z);
                     if (neighborBlock.getType() == blockType) {
                         Bukkit.getScheduler().scheduleSyncDelayedTask(TreeCapitator.getPlugin(), () -> destroyBlock(player, neighborBlock, tool, counter),
-                                5+5*(Math.abs(x) +  Math.abs(y) + Math.abs(z))); // The outer the block, the later it breaks; TODO: Make Speed variable for user preferences
-                    }
+                                5 + 5 * (Math.abs(x) +  Math.abs(y) + Math.abs(z))); // The outer the block, the later it breaks; TODO: Make Speed variable for user preferences
+                    } //TODO: Solve Problem: When multiple logs nearby, count goes too fast and skips
                 }
             }
         }

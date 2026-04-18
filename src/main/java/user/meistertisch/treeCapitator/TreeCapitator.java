@@ -1,6 +1,7 @@
 package user.meistertisch.treeCapitator;
 
 import com.sun.source.tree.Tree;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import user.meistertisch.treeCapitator.event.EventBlockBreak;
 
@@ -10,6 +11,8 @@ public final class TreeCapitator extends JavaPlugin {
     @Override
     public void onEnable() {
         plugin = this;
+
+        saveDefaultConfig();
 
         getServer().getPluginManager().registerEvents(new EventBlockBreak(), this);
     }

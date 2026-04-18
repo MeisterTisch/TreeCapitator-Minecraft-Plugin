@@ -1,0 +1,28 @@
+# Configuration file for the plugin. You can change the values as needed.
+# Change either through the in-game commands/menus or by editing this file directly.
+
+# Whether to only allow the plugin's features only in survival mode.
+# If true, players not in survival mode will not be affected by the plugin.
+# default value: true
+onlySurvival: true
+
+# The speed at which the logs will be destroyed.
+# Value range: 1 (slowest) to 5 (fastest).
+# Default value: 3
+speed: 3
+
+# The maximum number of logs that can be destroyed in one tree.
+# Do not set this value too high, as it may cause performance issues on larger trees.
+# NOT RECOMMENDED: Setting value to 0 results in no limit.
+# Default value: 64
+limit: 64
+
+# Whether to only allow the plugin's features when using an axe.
+# If false, other tools may also trigger the tree destruction.
+# Note: There is a different setting controlling the trigger with hands
+# Default value: true
+onlyAxe: true
+
+# Whether to allow tree destruction when using hands.
+# Default value: false
+onlyHand: false
