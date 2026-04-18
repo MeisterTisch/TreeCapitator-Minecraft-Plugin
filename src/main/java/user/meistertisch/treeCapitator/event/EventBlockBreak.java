@@ -10,26 +10,23 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import user.meistertisch.treeCapitator.TreeCapitator;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 public class EventBlockBreak implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
         Material blockType = event.getBlock().getType();
 
+        AtomicInteger counter = new AtomicInteger(32); // TODO: Change value to variable
         if(Tag.LOGS.isTagged(blockType)) {
-            destroyBlock(event.getBlock(), event.getPlayer().getInventory().getItemInMainHand());
+            destroyBlock(event.getBlock(), event.getPlayer().getInventory().getItemInMainHand(), counter);
         }
     }
 
-    int i = 0;
-    private void destroyBlock(Block block, ItemStack tool){
+    private void destroyBlock(Block block, ItemStack tool, AtomicInteger counter){
         // Return if block is air
-        if(block.getType().isAir()){
-            return;
-        }
-
-        // Limit for calls; TODO: Change to variable
-        if(i>100){
+        if(counter.decrementAndGet() < 0 || block.getType().isAir()){
             return;
         }
 
@@ -49,7 +46,7 @@ public class EventBlockBreak implements Listener {
                     // Get relatives, check for same type as original block. If same, recursive call of methode with delay for smooth gameplay
                     Block neighborBlock = block.getRelative(x, y, z);
                     if (neighborBlock.getType() == blockType) {
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(TreeCapitator.getPlugin(), () -> destroyBlock(neighborBlock, tool),
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(TreeCapitator.getPlugin(), () -> destroyBlock(neighborBlock, tool, counter),
                                 5+5*(Math.abs(x) +  Math.abs(y) + Math.abs(z))); // The outer the block, the later it breaks; TODO: Make Speed variable for user preferences
                     }
                 }
