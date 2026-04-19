@@ -9,12 +9,15 @@ import user.meistertisch.treeCapitator.event.EventBlockBreak;
 public final class TreeCapitator extends JavaPlugin {
     static TreeCapitator plugin;
     private LogChecker logChecker;
+    private LanguageManager lang;
 
     @Override
     public void onEnable() {
         plugin = this;
 
-        saveDefaultConfig();
+        // for config.yml file
+        this.saveDefaultConfig();
+
 
         if (getServer().getPluginManager().getPlugin("CoreProtect") != null) {
             this.logChecker = new CoreProtectHook();
@@ -24,7 +27,12 @@ public final class TreeCapitator extends JavaPlugin {
             getLogger().info("CoreProtect nicht gefunden, nutze Blätter-Check."); //TODO: Change to properties file
         }
 
+        String langCode = getConfig().getString("language", "en");
+        this.lang = new LanguageManager(langCode);
+
         getServer().getPluginManager().registerEvents(new EventBlockBreak(), this);
+
+        getComponentLogger().info(lang.getMessage("plugin_enabled"));
     }
 
     @Override
@@ -38,5 +46,9 @@ public final class TreeCapitator extends JavaPlugin {
 
     public LogChecker getLogChecker() {
         return logChecker;
+    }
+
+    public LanguageManager getLang() {
+        return lang;
     }
 }

@@ -1,33 +1,32 @@
 package user.meistertisch.treeCapitator;
 
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
-import java.io.File;
+import java.text.MessageFormat;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public class LanguageManager {
-    private final TreeCapitator plugin;
-    private FileConfiguration langConfig;
+    private final ResourceBundle bundle;
+    private final MiniMessage miniMessage = MiniMessage.miniMessage();
 
-    public LanguageManager(TreeCapitator plugin) {
-        this.plugin = plugin;
-        loadLanguage();
+    public LanguageManager(String languageCode) {
+        Locale locale = Locale.forLanguageTag(languageCode);
+        this.bundle = ResourceBundle.getBundle("lang", locale);
     }
 
-    public void loadLanguage() {
-        // Liest die Sprache aus der config.yml (z.B. "de" oder "en")
-        String lang = plugin.getConfig().getString("language", "en");
-        File langFile = new File(plugin.getDataFolder(), "lang_" + lang + ".properties");
-
-        // Falls Datei nicht existiert, aus Resources kopieren
-        if (!langFile.exists()) {
-            plugin.saveResource("lang_" + lang + ".properties", false);
+    public Component getMessage(String key, Object... args) {
+        if (!bundle.containsKey(key)) {
+            return miniMessage.deserialize("<red>Missing key: <gold>" + key);
         }
 
-        langConfig = YamlConfiguration.loadConfiguration(langFile);
-    }
+        String raw = bundle.getString(key);
 
-    public String getString(String key) {
-        return langConfig.getString(key, "Missing key: " + key);
+        if (args.length > 0) {
+            raw = MessageFormat.format(raw, args);
+        }
+
+        return miniMessage.deserialize(raw);
     }
 }

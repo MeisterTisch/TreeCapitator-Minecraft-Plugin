@@ -11,6 +11,7 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import user.meistertisch.treeCapitator.TreeCapitator;
 
+import java.text.MessageFormat;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -54,6 +55,7 @@ public class EventBlockBreak implements Listener {
         if (TreeCapitator.getPlugin().getLogChecker().isPlayerPlaced(block)) {
             return;
         }
+
 
         // Return if counter is above limit or block is air
         if(block.getType().isAir()){
