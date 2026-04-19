@@ -1,6 +1,15 @@
 # Configuration file for the plugin. You can change the values as needed.
 # Change either through the in-game commands/menus or by editing this file directly.
 
+# Whether the plugin is enabled or not.
+# Default value: true
+enabled: true
+
+# Language setting for the plugin's messages.
+# Supported languages: en (English), de (German)
+# Default value: en
+language: en
+
 # Whether to only allow the plugin's features only in survival mode.
 # If true, players not in survival mode will not be affected by the plugin.
 # default value: true
@@ -26,3 +35,8 @@ onlyAxe: true
 # Whether to allow tree destruction when using hands.
 # Default value: false
 onlyHand: false
+
+# Check if it's a tree before destroying the logs.
+# Value range: 0 (no check), 1 (leaf check), 2 (CoreProtect check)
+# default value: 0
+treeDetection: 0

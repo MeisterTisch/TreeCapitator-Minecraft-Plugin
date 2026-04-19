@@ -8,3 +8,6 @@ api-version: '1.21.11'
 load: POSTWORLD
 
 authors: [ MeisterTisch ]
+
+softdepend:
+  - CoreProtect

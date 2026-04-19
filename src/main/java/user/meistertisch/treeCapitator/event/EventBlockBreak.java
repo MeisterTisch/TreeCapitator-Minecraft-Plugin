@@ -45,17 +45,26 @@ public class EventBlockBreak implements Listener {
     }
 
     private void destroyBlock(Player player, Block block, ItemStack tool, AtomicInteger counter){
-        System.out.println(counter.get());
-
         // Return if player switched tool during the process
         if (!player.getInventory().getItemInMainHand().equals(tool)) {
             return;
         }
 
-        // Return if counter is above limit or block is air
-        if(counter.decrementAndGet() < 0 || block.getType().isAir()){
+        // Is log player placed?; TODO: Replace with variable setting
+        if (TreeCapitator.getPlugin().getLogChecker().isPlayerPlaced(block)) {
             return;
         }
+
+        // Return if counter is above limit or block is air
+        if(block.getType().isAir()){
+            return;
+        }
+
+        // Return if limit is surpassed
+        if (counter.get() <= 0) return;
+
+        // Return if limit will be surpassed
+        if (counter.decrementAndGet() < 0) return;
 
         // Safe block type for later check
         Material blockType = block.getType();
