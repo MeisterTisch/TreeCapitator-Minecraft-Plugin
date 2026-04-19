@@ -11,7 +11,6 @@ import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import user.meistertisch.treeCapitator.TreeCapitator;
 
-import java.text.MessageFormat;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
@@ -87,7 +86,7 @@ public class EventBlockBreak implements Listener {
                     if (neighborBlock.getType() == blockType) {
                         Bukkit.getScheduler().scheduleSyncDelayedTask(TreeCapitator.getPlugin(), () -> destroyBlock(player, neighborBlock, tool, counter),
                                 5 + 5 * (Math.abs(x) +  Math.abs(y) + Math.abs(z))); // The outer the block, the later it breaks; TODO: Make Speed variable for user preferences
-                    } //TODO: Solve Problem: When multiple logs nearby, count goes too fast and skips
+                    }
                 }
             }
         }

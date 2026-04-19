@@ -19,7 +19,7 @@ This project is under active development. My goal is to evolve it from a solid c
 - [X] **Base Recursion Logic** (Tree felling mechanics)
 - [X] **Axe check & Durability decreasement** 
 - [X] **Differentiation between natural and player-placed logs** (Preventing abuse/accidents)
-- [ ] **Max-Log Limitation**
+- [X] **Max-Log Limitation**
 - [ ] **Permissions Support** 
 
 ### 🟡 Nice-to-Have

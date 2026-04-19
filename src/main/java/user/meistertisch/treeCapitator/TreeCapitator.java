@@ -18,17 +18,17 @@ public final class TreeCapitator extends JavaPlugin {
         // for config.yml file
         this.saveDefaultConfig();
 
+        String langCode = getConfig().getString("language", "en");
+        this.lang = new LanguageManager(langCode);
+
 
         if (getServer().getPluginManager().getPlugin("CoreProtect") != null) {
             this.logChecker = new CoreProtectHook();
-            getLogger().info("CoreProtect Hook aktiviert!"); //TODO: Change to properties file
+            getComponentLogger().info(lang.getMessage("coreprotect_hook_activated"));
         } else {
             this.logChecker = new VanillaLogChecker();
-            getLogger().info("CoreProtect nicht gefunden, nutze Blätter-Check."); //TODO: Change to properties file
+            getComponentLogger().warn(lang.getMessage("coreprotect_hook_not_found"));
         }
-
-        String langCode = getConfig().getString("language", "en");
-        this.lang = new LanguageManager(langCode);
 
         getServer().getPluginManager().registerEvents(new EventBlockBreak(), this);
 
