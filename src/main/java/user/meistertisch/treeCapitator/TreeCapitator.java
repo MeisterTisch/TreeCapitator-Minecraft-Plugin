@@ -24,10 +24,14 @@ public final class TreeCapitator extends JavaPlugin {
 
         if (getServer().getPluginManager().getPlugin("CoreProtect") != null) {
             this.logChecker = new CoreProtectHook();
-            getComponentLogger().info(lang.getMessage("coreprotect_hook_activated"));
+            getComponentLogger().info(lang.getMessage("coreprotect.hook_activated"));
+
+            if(((CoreProtectHook) this.logChecker).isCoreProtectTreeGrowthEnabled()) {
+                getComponentLogger().warn(lang.getMessage("coreprotect.tree_growth_logging_enabled"));
+            }
         } else {
             this.logChecker = new VanillaLogChecker();
-            getComponentLogger().warn(lang.getMessage("coreprotect_hook_not_found"));
+            getComponentLogger().warn(lang.getMessage("coreprotect.hook_not_found"));
         }
 
         getServer().getPluginManager().registerEvents(new EventBlockBreak(), this);

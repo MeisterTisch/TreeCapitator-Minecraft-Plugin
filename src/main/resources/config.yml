@@ -32,6 +32,12 @@ limit: 64
 onlyAxe: true
 
 # Check if it's a tree before destroying the logs.
-# Value range: 0 (no check), 1 (leaf check), 2 (CoreProtect check)
-# default value: 0
-treeDetection: 0
+treeDetection:
+  # Sets the mode of the check.
+  # Value range: 0 (no check), 1 (leaf check), 2 (CoreProtect check)
+  # Note: Tree detection with CoreProtect only works on natural trees. Self-grown trees won't trigger plugin.
+  # default value: 0
+  mode: 0
+  # Whether to check every log or only the first one.
+  # Default value: true
+  deep: true

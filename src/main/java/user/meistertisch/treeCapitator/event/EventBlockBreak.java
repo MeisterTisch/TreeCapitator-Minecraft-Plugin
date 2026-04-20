@@ -27,38 +27,62 @@ public class EventBlockBreak implements Listener {
 
         Player player = event.getPlayer();
 
-        // Is player in survival; TODO: Replace with variable setting
-        if (player.getGameMode() != GameMode.SURVIVAL) {
+        // Is player in survival
+        boolean onlySurvival = TreeCapitator.getPlugin().getConfig().getBoolean("onlySurvival", true);
+        if (onlySurvival && player.getGameMode() != GameMode.SURVIVAL) {
             return;
         }
 
         ItemStack tool = player.getInventory().getItemInMainHand();
 
-        // Has player an axe?; TODO: Replace with variable setting (allowing other tools/hand)
-        if (!Tag.ITEMS_AXES.isTagged(tool.getType())) {
+        // Has player an axe?
+        boolean onlyAxe = TreeCapitator.getPlugin().getConfig().getBoolean("onlyAxe", true);
+        Material toolType = tool.getType();
+
+        if (onlyAxe) {
+            // Only axes are allowed
+            if (!Tag.ITEMS_AXES.isTagged(toolType)) return;
+        } else {
+            // Only axe or hand
+            boolean isAxe = Tag.ITEMS_AXES.isTagged(toolType);
+            boolean isHand = toolType.isAir();
+
+            if (!isAxe && !isHand) {
+                return;
+            }
+        }
+
+        // Is log player placed?
+        boolean detectTrees = TreeCapitator.getPlugin().getConfig().getInt("treeDetection.mode", 0) != 0;
+        if (detectTrees && TreeCapitator.getPlugin().getLogChecker().isPlayerPlaced(block)) {
             return;
         }
 
         int limit = TreeCapitator.getPlugin().getConfig().getInt("limit", 64);
         AtomicInteger counter = new AtomicInteger(limit);
-        destroyBlock(player, block, tool, counter);
+        destroyBlock(player, block, tool, counter, true);
     }
 
-    private void destroyBlock(Player player, Block block, ItemStack tool, AtomicInteger counter){
+    private void destroyBlock(Player player, Block block, ItemStack tool, AtomicInteger counter, boolean isFirstBlock){
         // Return if player switched tool during the process
         if (!player.getInventory().getItemInMainHand().equals(tool)) {
             return;
         }
 
-        // Is log player placed?; TODO: Replace with variable setting
-        if (TreeCapitator.getPlugin().getLogChecker().isPlayerPlaced(block)) {
+        // Return if counter is above limit or block is air
+        if(block.getType().isAir()) {
             return;
         }
 
-
-        // Return if counter is above limit or block is air
-        if(block.getType().isAir()){
-            return;
+        // Is log player placed?
+        boolean detectTrees = TreeCapitator.getPlugin().getConfig().getInt("treeDetection.mode", 0) != 0;
+        boolean isDeep = TreeCapitator.getPlugin().getConfig().getBoolean("treeDetection.deep", true);
+        if (detectTrees) {
+            if(isFirstBlock || isDeep) {
+                if(TreeCapitator.getPlugin().getLogChecker().isPlayerPlaced(block)){
+                    return;
+                }
+            }
         }
 
         // Return if limit is surpassed
@@ -77,7 +101,7 @@ public class EventBlockBreak implements Listener {
             for (int z = -1; z <= 1; z++) {
                 for (int x = -1; x <= 1; x++) {
                     //Skip the original block
-                    if(x == 0 && y == 0 && z == 0){
+                    if(x == 0 && y == 0 && z == 0) {
                         continue;
                     }
 
@@ -95,7 +119,7 @@ public class EventBlockBreak implements Listener {
                     Block neighborBlock = block.getRelative(x, y, z);
                     if (neighborBlock.getType() == blockType) {
                         Bukkit.getScheduler().scheduleSyncDelayedTask(TreeCapitator.getPlugin(),
-                                () -> destroyBlock(player, neighborBlock, tool, counter), delay); // The outer the block, the later it breaks;
+                                () -> destroyBlock(player, neighborBlock, tool, counter, false), delay); // The outer the block, the later it breaks;
                     }
                 }
             }
@@ -103,6 +127,10 @@ public class EventBlockBreak implements Listener {
     }
 
     private void damageItem(Player player, ItemStack tool) {
+        if (tool == null || tool.getType().isAir()) {
+            return;
+        }
+
         ItemMeta meta = tool.getItemMeta();
         if (meta instanceof Damageable damageable) {
             // Add damage
