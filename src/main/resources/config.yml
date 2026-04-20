@@ -16,7 +16,7 @@ language: en
 onlySurvival: true
 
 # The speed at which the logs will be destroyed.
-# Value range: 1 (slowest) to 5 (fastest).
+# Value range: 1 (fastest) to 5 (slowest).
 # Default value: 3
 speed: 3
 
@@ -27,14 +27,9 @@ speed: 3
 limit: 64
 
 # Whether to only allow the plugin's features when using an axe.
-# If false, other tools may also trigger the tree destruction.
-# Note: There is a different setting controlling the trigger with hands
+# If false, bare hand may also trigger the tree destruction.
 # Default value: true
 onlyAxe: true
-
-# Whether to allow tree destruction when using hands.
-# Default value: false
-onlyHand: false
 
 # Check if it's a tree before destroying the logs.
 # Value range: 0 (no check), 1 (leaf check), 2 (CoreProtect check)

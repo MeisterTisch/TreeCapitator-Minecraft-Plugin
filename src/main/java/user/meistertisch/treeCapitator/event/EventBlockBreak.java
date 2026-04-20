@@ -81,11 +81,21 @@ public class EventBlockBreak implements Listener {
                         continue;
                     }
 
+                    // Get speed from config and check in if it's in range; TODO: Fix corner speeds (Too fast with neighbor blocks somehow, will check later)
+                    long speed = TreeCapitator.getPlugin().getConfig().getInt("speed", 3);
+                    speed = Math.clamp(speed, 1, 5);
+
+                    // Calculate distance
+                    double distance = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+
+                    // Calculate delay according to speed value from config
+                    long delay = (speed * 2) + (long) (distance * 2.5);
+
                     // Get relatives, check for same type as original block. If same, recursive call of methode with delay for smooth gameplay
                     Block neighborBlock = block.getRelative(x, y, z);
                     if (neighborBlock.getType() == blockType) {
-                        Bukkit.getScheduler().scheduleSyncDelayedTask(TreeCapitator.getPlugin(), () -> destroyBlock(player, neighborBlock, tool, counter),
-                                5 + 5 * (Math.abs(x) +  Math.abs(y) + Math.abs(z))); // The outer the block, the later it breaks; TODO: Make Speed variable for user preferences
+                        Bukkit.getScheduler().scheduleSyncDelayedTask(TreeCapitator.getPlugin(),
+                                () -> destroyBlock(player, neighborBlock, tool, counter), delay); // The outer the block, the later it breaks;
                     }
                 }
             }
