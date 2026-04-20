@@ -10,6 +10,11 @@ enabled: true
 # Default value: en
 language: en
 
+# Whether to only allow the plugin's features when using an axe.
+# If false, bare hand may also trigger the tree destruction.
+# Default value: true
+onlyAxe: true
+
 # Whether to only allow the plugin's features only in survival mode.
 # If true, players not in survival mode will not be affected by the plugin.
 # default value: true
@@ -25,11 +30,6 @@ speed: 3
 # NOT RECOMMENDED: Setting value to 0 results in no limit.
 # Default value: 64
 limit: 64
-
-# Whether to only allow the plugin's features when using an axe.
-# If false, bare hand may also trigger the tree destruction.
-# Default value: true
-onlyAxe: true
 
 # Check if it's a tree before destroying the logs.
 treeDetection:

@@ -1,4 +1,4 @@
-package user.meistertisch.treeCapitator;
+package user.meistertisch.treeCapitator.manager;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;

@@ -28,7 +28,7 @@ public class EventBlockBreak implements Listener {
         Player player = event.getPlayer();
 
         // Is player in survival
-        boolean onlySurvival = TreeCapitator.getPlugin().getConfig().getBoolean("onlySurvival", true);
+        boolean onlySurvival = TreeCapitator.getPlugin().getConfigManager().onlySurvival;
         if (onlySurvival && player.getGameMode() != GameMode.SURVIVAL) {
             return;
         }
@@ -36,7 +36,7 @@ public class EventBlockBreak implements Listener {
         ItemStack tool = player.getInventory().getItemInMainHand();
 
         // Has player an axe?
-        boolean onlyAxe = TreeCapitator.getPlugin().getConfig().getBoolean("onlyAxe", true);
+        boolean onlyAxe = TreeCapitator.getPlugin().getConfigManager().onlyAxe;
         Material toolType = tool.getType();
 
         if (onlyAxe) {
@@ -53,12 +53,12 @@ public class EventBlockBreak implements Listener {
         }
 
         // Is log player placed?
-        boolean detectTrees = TreeCapitator.getPlugin().getConfig().getInt("treeDetection.mode", 0) != 0;
+        boolean detectTrees = TreeCapitator.getPlugin().getConfigManager().treeDetectionMode != 0;
         if (detectTrees && TreeCapitator.getPlugin().getLogChecker().isPlayerPlaced(block)) {
             return;
         }
 
-        int limit = TreeCapitator.getPlugin().getConfig().getInt("limit", 64);
+        int limit = TreeCapitator.getPlugin().getConfigManager().limit;
         AtomicInteger counter = new AtomicInteger(limit);
         destroyBlock(player, block, tool, counter, true);
     }
@@ -75,8 +75,8 @@ public class EventBlockBreak implements Listener {
         }
 
         // Is log player placed?
-        boolean detectTrees = TreeCapitator.getPlugin().getConfig().getInt("treeDetection.mode", 0) != 0;
-        boolean isDeep = TreeCapitator.getPlugin().getConfig().getBoolean("treeDetection.deep", true);
+        boolean detectTrees = TreeCapitator.getPlugin().getConfigManager().treeDetectionMode != 0;
+        boolean isDeep = TreeCapitator.getPlugin().getConfigManager().treeDetectionDeep;
         if (detectTrees) {
             if(isFirstBlock || isDeep) {
                 if(TreeCapitator.getPlugin().getLogChecker().isPlayerPlaced(block)){
@@ -106,7 +106,7 @@ public class EventBlockBreak implements Listener {
                     }
 
                     // Get speed from config and check in if it's in range; TODO: Fix corner speeds (Too fast with neighbor blocks somehow, will check later)
-                    long speed = TreeCapitator.getPlugin().getConfig().getInt("speed", 3);
+                    long speed = TreeCapitator.getPlugin().getConfigManager().speed;
                     speed = Math.clamp(speed, 1, 5);
 
                     // Calculate distance
