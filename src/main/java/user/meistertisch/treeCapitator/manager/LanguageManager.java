@@ -1,7 +1,9 @@
 package user.meistertisch.treeCapitator.manager;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.text.MessageFormat;
 import java.util.Locale;
@@ -16,17 +18,12 @@ public class LanguageManager {
         this.bundle = ResourceBundle.getBundle("lang", locale);
     }
 
-    public Component getMessage(String key, Object... args) {
-        if (!bundle.containsKey(key)) {
-            return miniMessage.deserialize("<red>Missing key: <gold>" + key);
-        }
-
+    public Component getMessage(String key, TagResolver... replacements) {
+        // 1. String aus der Config laden. Falls der Key fehlt, wird der Key selbst ausgegeben.
         String raw = bundle.getString(key);
 
-        if (args.length > 0) {
-            raw = MessageFormat.format(raw, args);
-        }
-
-        return miniMessage.deserialize(raw);
+        // 2. Den String mit MiniMessage deserialisieren.
+        // Die Replacements (Platzhalter) werden hier direkt verarbeitet.
+        return MiniMessage.miniMessage().deserialize(raw, replacements);
     }
 }

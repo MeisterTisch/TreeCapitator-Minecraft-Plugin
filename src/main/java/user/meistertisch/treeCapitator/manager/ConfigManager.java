@@ -1,10 +1,18 @@
 package user.meistertisch.treeCapitator.manager;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.jspecify.annotations.NonNull;
 import user.meistertisch.treeCapitator.TreeCapitator;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ConfigManager {
     private final TreeCapitator plugin;
@@ -17,6 +25,7 @@ public class ConfigManager {
     public boolean onlySurvival;
     public int speed;
     public int limit;
+    public boolean treeDetectionEnabled;
     public int treeDetectionMode;
     public boolean treeDetectionDeep;
 
@@ -37,99 +46,81 @@ public class ConfigManager {
         boolean changed = false;
 
         if(!config.isBoolean("enabled")){
-            config.set("enabled", true);
+            reportInvalid("enabled", true);
             changed = true;
-
-            Component invalidValueMsg = TreeCapitator.getPlugin().getLang().getMessage("config_invalid_value", "enabled", "true");
-            TreeCapitator.getPlugin().getComponentLogger().error(invalidValueMsg);
         }
 
         if(!config.isString("language")) {
-            config.set("language", "en");
+            reportInvalid("language", "en");
             changed = true;
-
-            Component invalidValueMsg = TreeCapitator.getPlugin().getLang().getMessage("config_invalid_value", "language", "en");
-            TreeCapitator.getPlugin().getComponentLogger().error(invalidValueMsg);
         } else {
             List<String> languages = List.of("en", "de");
             if (!languages.contains(config.getString("language"))) {
-                config.set("language", "en");
+                reportInvalid("language", "en");
                 changed = true;
-
-                Component invalidValueMsg = TreeCapitator.getPlugin().getLang().getMessage("config_invalid_value", "language", "en");
-                TreeCapitator.getPlugin().getComponentLogger().error(invalidValueMsg);
             }
         }
 
         if (!config.isBoolean("onlyAxe")) {
-            config.set("onlyAxe", true);
+            reportInvalid("onlyAxe", true);
             changed = true;
-
-            Component invalidValueMsg = TreeCapitator.getPlugin().getLang().getMessage("config_invalid_value", "onlyAxe", "true");
-            TreeCapitator.getPlugin().getComponentLogger().error(invalidValueMsg);
         }
 
         if (!config.isBoolean("onlySurvival")) {
-            config.set("onlySurvival", true);
+            reportInvalid("onlySurvival", true);
             changed = true;
-
-            Component invalidValueMsg = TreeCapitator.getPlugin().getLang().getMessage("config_invalid_value", "onlySurvival", "true");
-            TreeCapitator.getPlugin().getComponentLogger().error(invalidValueMsg);
         }
 
         if (!config.isInt("speed")) {
-            config.set("speed", 3);
+            reportInvalid("speed", 3);
             changed = true;
-
-            Component invalidValueMsg = TreeCapitator.getPlugin().getLang().getMessage("config_invalid_value", "speed", "3");
-            TreeCapitator.getPlugin().getComponentLogger().error(invalidValueMsg);
         } else {
             int i = Math.clamp(config.getInt("speed"), 1, 5);
             if(i != config.getInt("speed")) {
-                config.set("speed", 3);
+                reportInvalid("speed", 3);
                 changed = true;
-
-                Component invalidValueMsg = TreeCapitator.getPlugin().getLang().getMessage("config_invalid_value", "speed", "3");
-                TreeCapitator.getPlugin().getComponentLogger().error(invalidValueMsg);
             }
         }
 
         if (!config.isInt("limit") || config.getInt("limit") < 0) {
-            config.set("limit", 64);
+            reportInvalid("limit", 64);
             changed = true;
+        }
 
-            Component invalidValueMsg = TreeCapitator.getPlugin().getLang().getMessage("config_invalid_value", "limit", "64");
-            TreeCapitator.getPlugin().getComponentLogger().error(invalidValueMsg);
+        if (!config.isBoolean("treeDetection.enabled")) {
+            reportInvalid("treeDetection.enabled", false);
+            changed = true;
         }
 
         if (!config.isInt("treeDetection.mode")) {
-            config.set("treeDetection.mode", 0);
+            reportInvalid("treeDetection.mode", 1);
             changed = true;
-
-            Component invalidValueMsg = TreeCapitator.getPlugin().getLang().getMessage("config_invalid_value", "treeDetection.mode", "0");
-            TreeCapitator.getPlugin().getComponentLogger().error(invalidValueMsg);
         } else {
-            int i = Math.clamp(config.getInt("treeDetection.mode"), 0, 2);
+            int i = Math.clamp(config.getInt("treeDetection.mode"), 1, 2);
             if(i != config.getInt("treeDetection.mode")) {
-                config.set("treeDetection.mode", 0);
+                reportInvalid("treeDetection.mode", 1);
                 changed = true;
-
-                Component invalidValueMsg = TreeCapitator.getPlugin().getLang().getMessage("config_invalid_value", "treeDetection.mode", "0");
-                TreeCapitator.getPlugin().getComponentLogger().error(invalidValueMsg);
             }
         }
 
         if (!config.isBoolean("treeDetection.deep")) {
-            config.set("treeDetection.deep", true);
+            reportInvalid("treeDetection.deep", true);
             changed = true;
-
-            Component invalidValueMsg = TreeCapitator.getPlugin().getLang().getMessage("config_invalid_value", "treeDetection.deep", "true");
-            TreeCapitator.getPlugin().getComponentLogger().error(invalidValueMsg);
         }
 
         if (changed) {
             plugin.saveConfig();
         }
+    }
+
+    private void reportInvalid(String path, Object defaultValue){
+        config.set(path, defaultValue);
+        Component msg = plugin.getLang().getMessage(
+                "config_invalid_value",
+                Placeholder.unparsed("0", path),
+                Placeholder.unparsed("1", String.valueOf(defaultValue))
+        );
+        plugin.getComponentLogger().error(msg);
     }
 
     private void loadValues() {
@@ -139,7 +130,121 @@ public class ConfigManager {
         this.onlySurvival = config.getBoolean("onlySurvival", true);
         this.speed = config.getInt("speed", 3);
         this.limit = config.getInt("limit", 64);
-        this.treeDetectionMode = config.getInt("treeDetection.mode", 0);
+        this.treeDetectionEnabled = config.getBoolean("treeDetection.enabled", false);
+        this.treeDetectionMode = config.getInt("treeDetection.mode", 1);
         this.treeDetectionDeep = config.getBoolean("treeDetection.deep", true);
+    }
+
+    private void updateConfig(String path, Object value) {
+        config.set(path, value);
+        plugin.saveConfig();
+    }
+
+    public Component getAllSettings(){
+        Component message = Component.empty();
+
+        Map<String, Object> settings = getSettingsMap();
+
+        for (Map.Entry<String, Object> entry : settings.entrySet()) {
+            String key = entry.getKey();
+            String valueString = String.valueOf(entry.getValue());
+            Component value;
+
+            if(entry.getValue() instanceof Boolean val){
+                value = val
+                        ? Component.text("true", NamedTextColor.GREEN)
+                        : Component.text("false", NamedTextColor.RED);
+            } else {
+                value = Component.text(valueString);
+            }
+
+            String langKey = "command.tc.settings.key." + key.replace(" ", ".");
+
+            Component displayName = plugin.getLang().getMessage(langKey);
+
+            // Make line out of template
+            Component line = plugin.getLang().getMessage("command.tc.settings.template",
+                    Placeholder.component("0", displayName),
+                    Placeholder.component("1", value));
+
+            // Add Hover and Click Event
+            line = line.hoverEvent(HoverEvent.showText(
+                    plugin.getLang().getMessage("command.tc.settings.hover", Placeholder.component("0", displayName))
+            ));
+            line = line.clickEvent(ClickEvent.suggestCommand("/tc set " + key + " ")); // TODO: For  
+
+            if (!message.equals(Component.empty())) message = message.appendNewline();
+            message = message.append(line);
+        }
+
+        return message;
+    }
+
+    private @NonNull Map<String, Object> getSettingsMap() {
+        Map<String, Object> settings = new LinkedHashMap<>();
+        settings.put("enabled", enabled);
+        settings.put("language", language);
+        settings.put("onlyAxe", onlyAxe);
+        settings.put("onlySurvival", onlySurvival);
+        settings.put("speed", speed);
+        settings.put("limit", limit);
+        settings.put("treeDetection enabled", treeDetectionEnabled);
+        settings.put("treeDetection mode", getModeName()); // Method to get mode name instead of integer
+        settings.put("treeDetection deep", treeDetectionDeep);
+        return settings;
+    }
+
+    private String getModeName() {
+        return switch (this.treeDetectionMode) {
+            case 1 -> "leaf";
+            case 2 -> "coreprotect";
+            default -> "";
+        };
+    }
+
+    // SETTERS
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        updateConfig("enabled", enabled);
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+        updateConfig("language", language);
+    }
+
+    public void setOnlyAxe(boolean onlyAxe) {
+        this.onlyAxe = onlyAxe;
+        updateConfig("onlyAxe", onlyAxe);
+    }
+
+    public void setOnlySurvival(boolean onlySurvival) {
+        this.onlySurvival = onlySurvival;
+        updateConfig("onlySurvival", onlySurvival);
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
+        updateConfig("speed", speed);
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
+        updateConfig("limit", limit);
+    }
+
+    public void setTreeDetectionEnabled(boolean treeDetectionEnabled) {
+        this.treeDetectionEnabled = treeDetectionEnabled;
+        updateConfig("treeDetection.enabled", treeDetectionEnabled);
+    }
+
+    public void setTreeDetectionMode(int treeDetectionMode) {
+        this.treeDetectionMode = treeDetectionMode;
+        updateConfig("treeDetection.mode", treeDetectionMode);
+    }
+
+    public void setTreeDetectionDeep(boolean treeDetectionDeep) {
+        this.treeDetectionDeep = treeDetectionDeep;
+        updateConfig("treeDetection.deep", treeDetectionDeep);
     }
 }

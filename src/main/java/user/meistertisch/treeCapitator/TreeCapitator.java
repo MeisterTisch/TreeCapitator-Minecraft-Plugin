@@ -4,6 +4,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import user.meistertisch.treeCapitator.api.CoreProtectHook;
 import user.meistertisch.treeCapitator.api.LogChecker;
 import user.meistertisch.treeCapitator.api.VanillaLogChecker;
+import user.meistertisch.treeCapitator.command.TreeCapitatorCommand;
 import user.meistertisch.treeCapitator.event.EventBlockBreak;
 import user.meistertisch.treeCapitator.manager.ConfigManager;
 import user.meistertisch.treeCapitator.manager.LanguageManager;
@@ -25,6 +26,7 @@ public final class TreeCapitator extends JavaPlugin {
         String langCode = getConfig().getString("language", "en");
         this.lang = new LanguageManager(langCode);
 
+        // Setup Log Checker/Tree Detection
         if (getServer().getPluginManager().getPlugin("CoreProtect") != null) {
             this.logChecker = new CoreProtectHook();
             getComponentLogger().info(lang.getMessage("coreprotect.hook_activated"));
@@ -37,7 +39,11 @@ public final class TreeCapitator extends JavaPlugin {
             getComponentLogger().warn(lang.getMessage("coreprotect.hook_not_found"));
         }
 
+        // Events
         getServer().getPluginManager().registerEvents(new EventBlockBreak(), this);
+
+        // Commands
+        getCommand("treecapitator").setExecutor(new TreeCapitatorCommand(this));
 
         getComponentLogger().info(lang.getMessage("plugin_enabled"));
     }

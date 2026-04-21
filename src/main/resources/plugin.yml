@@ -11,3 +11,9 @@ authors: [ MeisterTisch ]
 
 softdepend:
   - CoreProtect
+
+commands:
+    treecapitator:
+        description: Main command for the plugin.
+        usage: /treecapitator help
+        aliases: [tc, treecap]

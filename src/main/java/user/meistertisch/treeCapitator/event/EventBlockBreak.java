@@ -53,7 +53,7 @@ public class EventBlockBreak implements Listener {
         }
 
         // Is log player placed?
-        boolean detectTrees = TreeCapitator.getPlugin().getConfigManager().treeDetectionMode != 0;
+        boolean detectTrees = TreeCapitator.getPlugin().getConfigManager().treeDetectionEnabled;
         if (detectTrees && TreeCapitator.getPlugin().getLogChecker().isPlayerPlaced(block)) {
             return;
         }
@@ -75,7 +75,7 @@ public class EventBlockBreak implements Listener {
         }
 
         // Is log player placed?
-        boolean detectTrees = TreeCapitator.getPlugin().getConfigManager().treeDetectionMode != 0;
+        boolean detectTrees = TreeCapitator.getPlugin().getConfigManager().treeDetectionEnabled;
         boolean isDeep = TreeCapitator.getPlugin().getConfigManager().treeDetectionDeep;
         if (detectTrees) {
             if(isFirstBlock || isDeep) {
@@ -112,7 +112,7 @@ public class EventBlockBreak implements Listener {
                     // Calculate distance
                     double distance = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
 
-                    // Calculate delay according to speed value from config
+                    // Calculate delay according to speed value from config; TODO: Give possibility to make speed depending on tool (wooden vs. netherite)
                     long delay = (speed * 2) + (long) (distance * 2.5);
 
                     // Get relatives, check for same type as original block. If same, recursive call of methode with delay for smooth gameplay
