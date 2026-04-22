@@ -151,7 +151,77 @@ public class TreeCapitatorCommand implements TabExecutor {
                         Placeholder.unparsed("setting", setting)
                 ));
             }
+            case "speed", "limit" -> {
+                if (args.length != 3) {
+                    sender.sendMessage(plugin.getLang().getMessage("command.invalid_use"));
+                    return;
+                }
 
+                int current;
+
+                switch (setting){
+                    case "speed" -> current = cm.speed;
+                    case "limit" -> current = cm.limit;
+                    default -> {
+                        return;
+                    }
+                }
+
+                int intValue;
+                // Not an integer
+                try {
+                    intValue = Integer.parseInt(value);
+                } catch (NumberFormatException e) {
+                    sender.sendMessage(plugin.getLang().getMessage(
+                            "command.invalid_input",
+                            Placeholder.unparsed("input", value)
+                    ));
+                    return;
+                }
+
+                // negative value
+                if(intValue < 0) {
+                    sender.sendMessage(plugin.getLang().getMessage(
+                            "command.invalid_input",
+                            Placeholder.unparsed("input", value)
+                    ));
+                    return;
+                }
+
+                // If setting to set is speed and value is below 1 or above 5
+                if(setting.equalsIgnoreCase("speed")) {
+                    if(intValue < 1 || intValue > 5) {
+                        sender.sendMessage(plugin.getLang().getMessage(
+                                "command.invalid_input",
+                                Placeholder.unparsed("input", value)
+                        ));
+                        return;
+                    }
+                }
+
+                // Same value
+                if(intValue == current) {
+                    sender.sendMessage(plugin.getLang().getMessage(
+                            "command.tc.set.already_set",
+                            Placeholder.unparsed("value", value),
+                            Placeholder.unparsed("setting", setting)
+                    ));
+                    return;
+                }
+
+                switch (setting) {
+                    case "speed" -> cm.setSpeed(intValue);
+                    case "limit" -> cm.setLimit(intValue);
+                    default -> {
+                        return;
+                    }
+                }
+                sender.sendMessage(plugin.getLang().getMessage(
+                        "command.tc.set.success",
+                        Placeholder.unparsed("value", value),
+                        Placeholder.unparsed("setting", setting)
+                ));
+            }
         }
     }
 
@@ -174,11 +244,17 @@ public class TreeCapitatorCommand implements TabExecutor {
 
             switch (setting) {
                 case "onlysurvival", "onlyaxe", "status":
-                    return List.of("enable", "disable");
+                    return Stream.of("enable", "disable")
+                            .filter(s -> s.startsWith(args[2].toLowerCase()))
+                            .toList();
                 case "speed":
-                    return List.of("1", "2", "3", "4", "5");
+                    return Stream.of("1", "2", "3", "4", "5")
+                            .filter(s -> s.startsWith(args[2].toLowerCase()))
+                            .toList();
                 case "limit":
-                    return List.of("32", "64", "128", "256");
+                    return Stream.of("32", "64", "128", "256")
+                            .filter(s -> s.startsWith(args[2].toLowerCase()))
+                            .toList();
                 case "treedetection":
                     return Stream.of("mode", "deep", "status")
                             .filter(s -> s.startsWith(args[2].toLowerCase()))
@@ -199,7 +275,9 @@ public class TreeCapitatorCommand implements TabExecutor {
                         .toList();
             }
             if (subSetting.equals("deep") || subSetting.equals("status")) {
-                return List.of("enable", "disable");
+                return Stream.of("enable", "disable")
+                        .filter(s -> s.startsWith(args[3].toLowerCase()))
+                        .toList();
             }
         }
 
