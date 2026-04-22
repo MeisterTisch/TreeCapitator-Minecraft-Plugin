@@ -167,11 +167,19 @@ public class ConfigManager {
                     Placeholder.component("0", displayName),
                     Placeholder.component("1", value));
 
-            // Add Hover and Click Event
+            // Add Hover Event
             line = line.hoverEvent(HoverEvent.showText(
                     plugin.getLang().getMessage("command.tc.settings.hover", Placeholder.component("0", displayName))
             ));
-            line = line.clickEvent(ClickEvent.suggestCommand("/tc set " + key + " ")); // TODO: For  
+
+            // Adding Click Event with two special cases
+            if(key.equalsIgnoreCase("enabled")){
+                line = line.clickEvent(ClickEvent.suggestCommand("/tc set status "));
+            } else if(key.equalsIgnoreCase("treeDetection enabled")) {
+                line = line.clickEvent(ClickEvent.suggestCommand("/tc set treeDetection status "));
+            } else {
+                line = line.clickEvent(ClickEvent.suggestCommand("/tc set " + key + " "));
+            }
 
             if (!message.equals(Component.empty())) message = message.appendNewline();
             message = message.append(line);
