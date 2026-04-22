@@ -65,13 +65,22 @@ public class TreeCapitatorCommand implements TabExecutor {
         String value = args[2];
 
         switch (setting) {
-            case "status" -> {
+            case "status", "onlyaxe", "onlysurvival" -> {
                 if (args.length != 3) {
                     sender.sendMessage(plugin.getLang().getMessage("command.invalid_use"));
                     return;
                 }
 
-                boolean current = cm.enabled;
+                boolean current;
+
+                switch (setting) {
+                    case "status" -> current = cm.enabled;
+                    case "onlyaxe" -> current = cm.onlyAxe;
+                    case "onlysurvival" -> current = cm.onlySurvival;
+                    default -> {
+                        return;
+                    }
+                }
 
                 // Not a boolean
                 if(!value.equalsIgnoreCase("enable") && !value.equalsIgnoreCase("disable")) {
@@ -94,7 +103,14 @@ public class TreeCapitatorCommand implements TabExecutor {
                     return;
                 }
 
-                cm.setEnabled(isEnabling);
+                switch (setting) {
+                    case "status" -> cm.setEnabled(isEnabling);
+                    case "onlyaxe" -> cm.setOnlyAxe(isEnabling);
+                    case "onlysurvival" -> cm.setOnlySurvival(isEnabling);
+                    default -> {
+                        return;
+                    }
+                }
                 sender.sendMessage(plugin.getLang().getMessage(
                         "command.tc.set.success", //TODO: Maybe make the text specific to each setting? "status has been set to enabled!" sounds weird
                         Placeholder.unparsed("value", value),
