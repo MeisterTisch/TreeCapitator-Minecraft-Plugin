@@ -117,8 +117,8 @@ public class ConfigManager {
         config.set(path, defaultValue);
         Component msg = plugin.getLang().getMessage(
                 "config_invalid_value",
-                Placeholder.unparsed("0", path),
-                Placeholder.unparsed("1", String.valueOf(defaultValue))
+                Placeholder.unparsed("path", path),
+                Placeholder.unparsed("default", String.valueOf(defaultValue))
         );
         plugin.getComponentLogger().error(msg);
     }
@@ -164,12 +164,12 @@ public class ConfigManager {
 
             // Make line out of template
             Component line = plugin.getLang().getMessage("command.tc.settings.template",
-                    Placeholder.component("0", displayName),
-                    Placeholder.component("1", value));
+                    Placeholder.component("key", displayName),
+                    Placeholder.component("value", value));
 
             // Add Hover Event
             line = line.hoverEvent(HoverEvent.showText(
-                    plugin.getLang().getMessage("command.tc.settings.hover", Placeholder.component("0", displayName))
+                    plugin.getLang().getMessage("command.tc.settings.hover", Placeholder.component("name", displayName))
             ));
 
             // Adding Click Event with two special cases
@@ -219,6 +219,7 @@ public class ConfigManager {
     public void setLanguage(String language) {
         this.language = language;
         updateConfig("language", language);
+        plugin.getLang().reload();
     }
 
     public void setOnlyAxe(boolean onlyAxe) {

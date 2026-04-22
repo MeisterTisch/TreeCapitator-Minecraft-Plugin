@@ -1,6 +1,7 @@
 package user.meistertisch.treeCapitator.command;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -45,7 +46,8 @@ public class TreeCapitatorCommand implements TabExecutor {
                 // TODO: Here toggle
             }
             case "set" -> {
-
+                handleSet(sender, args);
+                return true;
             }
         }
 
@@ -53,8 +55,8 @@ public class TreeCapitatorCommand implements TabExecutor {
     }
 
     private void handleSet(CommandSender sender, String[] args) {
-        if (args.length < 3) {
-            sender.sendMessage("§cBenutzung: /tc set <einstellung> <wert>");
+        if (args.length < 3 || args.length > 4) {
+            sender.sendMessage(plugin.getLang().getMessage("command.invalid_use"));
             return;
         }
 
@@ -62,22 +64,78 @@ public class TreeCapitatorCommand implements TabExecutor {
         String setting = args[1].toLowerCase();
         String value = args[2];
 
-        try {
-            switch (setting) {
-                case "speed":
-                    cm.setSpeed(Integer.parseInt(value));
-                    break;
-                case "limit":
-                    cm.setLimit(Integer.parseInt(value));
-                    break;
-                case "onlyaxe":
-                    cm.setOnlyAxe(Boolean.parseBoolean(value));
-                    break;
-                // ... weitere Fälle ...
+        switch (setting) {
+            case "status" -> {
+                if (args.length != 3) {
+                    sender.sendMessage(plugin.getLang().getMessage("command.invalid_use"));
+                    return;
+                }
+
+                boolean current = cm.enabled;
+
+                // Not a boolean
+                if(!value.equalsIgnoreCase("enable") && !value.equalsIgnoreCase("disable")) {
+                    sender.sendMessage(plugin.getLang().getMessage(
+                            "command.invalid_input",
+                            Placeholder.unparsed("input", value)
+                    ));
+                    return;
+                }
+
+                boolean isEnabling = value.equalsIgnoreCase("enable");
+
+                // Same status
+                if(isEnabling == current) {
+                    sender.sendMessage(plugin.getLang().getMessage(
+                            "command.tc.set.already_set",
+                            Placeholder.unparsed("value", value),
+                            Placeholder.unparsed("setting", setting)
+                    ));
+                    return;
+                }
+
+                cm.setEnabled(isEnabling);
+                sender.sendMessage(plugin.getLang().getMessage(
+                        "command.tc.set.success", //TODO: Maybe make the text specific to each setting? "status has been set to enabled!" sounds weird
+                        Placeholder.unparsed("value", value),
+                        Placeholder.unparsed("setting", setting)
+                ));
             }
-            sender.sendMessage("§aEinstellung §e" + setting + " §awurde auf §e" + value + " §ageändert.");
-        } catch (NumberFormatException e) {
-            sender.sendMessage("§cBitte gib eine gültige Zahl ein!");
+            case "language" -> {
+                if (args.length != 3) {
+                    sender.sendMessage(plugin.getLang().getMessage("command.invalid_use"));
+                    return;
+                }
+
+                String current = cm.language;
+
+                // Invalid language
+                if(!plugin.getLang().getLanguages().contains(value)) {
+                    sender.sendMessage(plugin.getLang().getMessage(
+                            "command.invalid_input",
+                            Placeholder.unparsed("input", value)
+                    ));
+                    return;
+                }
+
+                // Same language
+                if(value.equalsIgnoreCase(current)) {
+                    sender.sendMessage(plugin.getLang().getMessage(
+                            "command.tc.set.already_set",
+                            Placeholder.unparsed("value", value),
+                            Placeholder.unparsed("setting", setting)
+                    ));
+                    return;
+                }
+
+                cm.setLanguage(value);
+                sender.sendMessage(plugin.getLang().getMessage(
+                        "command.tc.set.success",
+                        Placeholder.unparsed("value", value),
+                        Placeholder.unparsed("setting", setting)
+                ));
+            }
+
         }
     }
 
@@ -110,7 +168,9 @@ public class TreeCapitatorCommand implements TabExecutor {
                             .filter(s -> s.startsWith(args[2].toLowerCase()))
                             .toList();
                 case "language":
-                    return List.of("en", "de");
+                    return plugin.getLang().getLanguages().stream()
+                            .filter(s -> s.startsWith(args[2].toLowerCase()))
+                            .toList();
             }
         }
 
