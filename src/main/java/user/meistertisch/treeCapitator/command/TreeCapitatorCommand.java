@@ -83,7 +83,7 @@ public class TreeCapitatorCommand implements TabExecutor {
                 }
 
                 // Not a boolean
-                if(!value.equalsIgnoreCase("enable") && !value.equalsIgnoreCase("disable")) {
+                if (!value.equalsIgnoreCase("enable") && !value.equalsIgnoreCase("disable")) {
                     sender.sendMessage(plugin.getLang().getMessage(
                             "command.invalid_input",
                             Placeholder.unparsed("input", value)
@@ -94,7 +94,7 @@ public class TreeCapitatorCommand implements TabExecutor {
                 boolean isEnabling = value.equalsIgnoreCase("enable");
 
                 // Same status
-                if(isEnabling == current) {
+                if (isEnabling == current) {
                     sender.sendMessage(plugin.getLang().getMessage(
                             "command.tc.set.already_set",
                             Placeholder.unparsed("value", value),
@@ -126,7 +126,7 @@ public class TreeCapitatorCommand implements TabExecutor {
                 String current = cm.language;
 
                 // Invalid language
-                if(!plugin.getLang().getLanguages().contains(value)) {
+                if (!plugin.getLang().getLanguages().contains(value)) {
                     sender.sendMessage(plugin.getLang().getMessage(
                             "command.invalid_input",
                             Placeholder.unparsed("input", value)
@@ -135,7 +135,7 @@ public class TreeCapitatorCommand implements TabExecutor {
                 }
 
                 // Same language
-                if(value.equalsIgnoreCase(current)) {
+                if (value.equalsIgnoreCase(current)) {
                     sender.sendMessage(plugin.getLang().getMessage(
                             "command.tc.set.already_set",
                             Placeholder.unparsed("value", value),
@@ -159,7 +159,7 @@ public class TreeCapitatorCommand implements TabExecutor {
 
                 int current;
 
-                switch (setting){
+                switch (setting) {
                     case "speed" -> current = cm.speed;
                     case "limit" -> current = cm.limit;
                     default -> {
@@ -180,7 +180,7 @@ public class TreeCapitatorCommand implements TabExecutor {
                 }
 
                 // negative value
-                if(intValue < 0) {
+                if (intValue < 0) {
                     sender.sendMessage(plugin.getLang().getMessage(
                             "command.invalid_input",
                             Placeholder.unparsed("input", value)
@@ -189,8 +189,8 @@ public class TreeCapitatorCommand implements TabExecutor {
                 }
 
                 // If setting to set is speed and value is below 1 or above 5
-                if(setting.equalsIgnoreCase("speed")) {
-                    if(intValue < 1 || intValue > 5) {
+                if (setting.equalsIgnoreCase("speed")) {
+                    if (intValue < 1 || intValue > 5) {
                         sender.sendMessage(plugin.getLang().getMessage(
                                 "command.invalid_input",
                                 Placeholder.unparsed("input", value)
@@ -200,7 +200,7 @@ public class TreeCapitatorCommand implements TabExecutor {
                 }
 
                 // Same value
-                if(intValue == current) {
+                if (intValue == current) {
                     sender.sendMessage(plugin.getLang().getMessage(
                             "command.tc.set.already_set",
                             Placeholder.unparsed("value", value),
@@ -221,6 +221,100 @@ public class TreeCapitatorCommand implements TabExecutor {
                         Placeholder.unparsed("value", value),
                         Placeholder.unparsed("setting", setting)
                 ));
+            }
+            case "treedetection" -> {
+                if (args.length != 4) {
+                    sender.sendMessage(plugin.getLang().getMessage("command.invalid_use"));
+                    return;
+                }
+                setting = args[2].toLowerCase();
+                value = args[3];
+
+                // Mode section
+                if(setting.equalsIgnoreCase("mode")){
+                    int current = cm.treeDetectionMode;
+
+                    // Not a String
+                    if (!value.equalsIgnoreCase("leaf") && !value.equalsIgnoreCase("coreprotect")) { //TODO: Maybe change this if check to a more generic one if more modes will be added in the future
+                        sender.sendMessage(plugin.getLang().getMessage(
+                                "command.invalid_input",
+                                Placeholder.unparsed("input", value)
+                        ));
+                        return;
+                    }
+
+                    int intToSet;
+                    switch (value) {
+                        case "leaf" -> intToSet = 1;
+                        case "coreprotect" -> intToSet = 2;
+                        default -> {
+                            return;
+                        }
+                    }
+
+                    // Same mode
+                    if (intToSet == current) {
+                        sender.sendMessage(plugin.getLang().getMessage(
+                                "command.tc.set.already_set",
+                                Placeholder.unparsed("value", value),
+                                Placeholder.unparsed("setting", "treeDetection." + setting)
+                        ));
+                        return;
+                    }
+
+                    cm.setTreeDetectionMode(intToSet);
+                    sender.sendMessage(plugin.getLang().getMessage(
+                            "command.tc.set.success",
+                            Placeholder.unparsed("value", value),
+                            Placeholder.unparsed("setting", "treeDetection." + setting)
+                    ));
+                } else {
+                    boolean current;
+
+                    switch (setting) {
+                        case "deep" -> current = cm.treeDetectionDeep;
+                        case "status" -> current = cm.treeDetectionEnabled;
+                        default -> {
+                            sender.sendMessage(plugin.getLang().getMessage("command.invalid_use"));
+                            return;
+                        }
+                    }
+
+                    // Not a boolean
+                    if (!value.equalsIgnoreCase("enable") && !value.equalsIgnoreCase("disable")) {
+                        sender.sendMessage(plugin.getLang().getMessage(
+                                "command.invalid_input",
+                                Placeholder.unparsed("input", value)
+                        ));
+                        return;
+                    }
+
+                    boolean isEnabling = value.equalsIgnoreCase("enable");
+
+                    // Same status
+                    if (isEnabling == current) {
+                        sender.sendMessage(plugin.getLang().getMessage(
+                                "command.tc.set.already_set",
+                                Placeholder.unparsed("value", value),
+                                Placeholder.unparsed("setting", "treeDetection." + setting)
+                        ));
+                        return;
+                    }
+
+                    switch (setting) {
+                        case "deep" -> cm.setTreeDetectionDeep(isEnabling);
+                        case "status" -> cm.setTreeDetectionEnabled(isEnabling);
+                        default -> {
+                            sender.sendMessage(plugin.getLang().getMessage("command.invalid_use"));
+                            return;
+                        }
+                    }
+                    sender.sendMessage(plugin.getLang().getMessage(
+                            "command.tc.set.success",
+                            Placeholder.unparsed("value", value),
+                            Placeholder.unparsed("setting", "treeDetection." + setting)
+                    ));
+                }
             }
         }
     }
