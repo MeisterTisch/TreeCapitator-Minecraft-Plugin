@@ -211,48 +211,48 @@ public class ConfigManager {
     }
 
     // SETTERS
-    public void setEnabled(boolean enabled) {
+    public synchronized void setEnabled(boolean enabled) {
         this.enabled = enabled;
         updateConfig("enabled", enabled);
     }
 
-    public void setLanguage(String language) {
+    public synchronized void setLanguage(String language) {
         this.language = language;
         updateConfig("language", language);
         plugin.getLang().reload();
     }
 
-    public void setOnlyAxe(boolean onlyAxe) {
+    public synchronized void setOnlyAxe(boolean onlyAxe) {
         this.onlyAxe = onlyAxe;
         updateConfig("onlyAxe", onlyAxe);
     }
 
-    public void setOnlySurvival(boolean onlySurvival) {
+    public synchronized void setOnlySurvival(boolean onlySurvival) {
         this.onlySurvival = onlySurvival;
         updateConfig("onlySurvival", onlySurvival);
     }
 
-    public void setSpeed(int speed) {
+    public synchronized void setSpeed(int speed) {
         this.speed = speed;
         updateConfig("speed", speed);
     }
 
-    public void setLimit(int limit) {
+    public synchronized void setLimit(int limit) {
         this.limit = limit;
         updateConfig("limit", limit);
     }
 
-    public void setTreeDetectionEnabled(boolean treeDetectionEnabled) {
+    public synchronized void setTreeDetectionEnabled(boolean treeDetectionEnabled) {
         this.treeDetectionEnabled = treeDetectionEnabled;
         updateConfig("treeDetection.enabled", treeDetectionEnabled);
     }
 
-    public void setTreeDetectionMode(int treeDetectionMode) {
+    public synchronized void setTreeDetectionMode(int treeDetectionMode) {
         this.treeDetectionMode = treeDetectionMode;
         updateConfig("treeDetection.mode", treeDetectionMode);
     }
 
-    public void setTreeDetectionDeep(boolean treeDetectionDeep) {
+    public synchronized void setTreeDetectionDeep(boolean treeDetectionDeep) {
         this.treeDetectionDeep = treeDetectionDeep;
         updateConfig("treeDetection.deep", treeDetectionDeep);
     }
