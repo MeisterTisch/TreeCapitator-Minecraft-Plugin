@@ -245,11 +245,13 @@ public class ConfigManager {
     public synchronized void setTreeDetectionEnabled(boolean treeDetectionEnabled) {
         this.treeDetectionEnabled = treeDetectionEnabled;
         updateConfig("treeDetection.enabled", treeDetectionEnabled);
+        plugin.reloadLogChecker();
     }
 
     public synchronized void setTreeDetectionMode(int treeDetectionMode) {
         this.treeDetectionMode = treeDetectionMode;
         updateConfig("treeDetection.mode", treeDetectionMode);
+        plugin.reloadLogChecker();
     }
 
     public synchronized void setTreeDetectionDeep(boolean treeDetectionDeep) {

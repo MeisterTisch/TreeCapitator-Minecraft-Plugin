@@ -26,18 +26,7 @@ public final class TreeCapitator extends JavaPlugin {
         String langCode = getConfig().getString("language", "en");
         this.lang = new LanguageManager(langCode);
 
-        // Setup Log Checker/Tree Detection
-        if (getServer().getPluginManager().getPlugin("CoreProtect") != null) {
-            this.logChecker = new CoreProtectHook();
-            getComponentLogger().info(lang.getMessage("coreprotect.hook_activated"));
-
-            if(((CoreProtectHook) this.logChecker).isCoreProtectTreeGrowthEnabled()) {
-                getComponentLogger().warn(lang.getMessage("coreprotect.tree_growth_logging_enabled"));
-            }
-        } else {
-            this.logChecker = new VanillaLogChecker();
-            getComponentLogger().warn(lang.getMessage("coreprotect.hook_not_found"));
-        }
+        setupLogChecker();
 
         // Events
         getServer().getPluginManager().registerEvents(new EventBlockBreak(), this);
@@ -53,6 +42,37 @@ public final class TreeCapitator extends JavaPlugin {
         // Plugin shutdown logic
     }
 
+    public void reloadLogChecker(){ setupLogChecker(); }
+
+    private void setupLogChecker() {
+        int mode = configManager.treeDetectionMode;
+
+        if(!configManager.treeDetectionEnabled){
+            return;
+        }
+
+        // Mode 2 = CoreProtect
+        if (mode == 2) {
+            if (getServer().getPluginManager().getPlugin("CoreProtect") != null) {
+                this.logChecker = new CoreProtectHook();
+                getComponentLogger().info(lang.getMessage("coreprotect.hook_activated"));
+
+                if (((CoreProtectHook) this.logChecker).isCoreProtectTreeGrowthEnabled()) {
+                    getComponentLogger().warn(lang.getMessage("coreprotect.tree_growth_logging_enabled"));
+                }
+            } else {
+                getComponentLogger().error(lang.getMessage("coreprotect.hook_not_found"));
+                this.logChecker = new VanillaLogChecker();
+                configManager.setTreeDetectionMode(1);
+                configManager.setTreeDetectionEnabled(false);
+            }
+        } else if(mode == 1) {
+            this.logChecker = new VanillaLogChecker();
+            getComponentLogger().info(lang.getMessage("tree_detection.leaf_mode"));
+        }
+    }
+
+    // Getters
     public static TreeCapitator getPlugin() {
         return plugin;
     }

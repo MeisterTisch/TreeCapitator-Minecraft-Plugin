@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.jspecify.annotations.NonNull;
 import user.meistertisch.treeCapitator.TreeCapitator;
+import user.meistertisch.treeCapitator.api.CoreProtectHook;
 import user.meistertisch.treeCapitator.manager.ConfigManager;
 
 import java.security.NoSuchAlgorithmException;
@@ -231,7 +232,7 @@ public class TreeCapitatorCommand implements TabExecutor {
                 value = args[3];
 
                 // Mode section
-                if(setting.equalsIgnoreCase("mode")){
+                if (setting.equalsIgnoreCase("mode")) {
                     int current = cm.treeDetectionMode;
 
                     // Not a String
@@ -259,6 +260,12 @@ public class TreeCapitatorCommand implements TabExecutor {
                                 Placeholder.unparsed("value", value),
                                 Placeholder.unparsed("setting", "treeDetection." + setting)
                         ));
+                        return;
+                    }
+
+                    if (plugin.getServer().getPluginManager().getPlugin("CoreProtect") == null) {
+                        sender.sendMessage(plugin.getLang().getMessage("coreprotect.hook_not_found"));
+                        cm.setTreeDetectionMode(intToSet);
                         return;
                     }
 
