@@ -7,10 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.jspecify.annotations.NonNull;
 import user.meistertisch.treeCapitator.TreeCapitator;
-import user.meistertisch.treeCapitator.api.CoreProtectHook;
 import user.meistertisch.treeCapitator.manager.ConfigManager;
 
-import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;

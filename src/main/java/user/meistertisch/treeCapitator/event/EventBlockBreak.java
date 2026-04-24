@@ -18,6 +18,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class EventBlockBreak implements Listener {
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
+        if(!TreeCapitator.getPlugin().getConfigManager().enabled) {
+            return;
+        }
+
         Block block = event.getBlock();
         Material blockType = block.getType();
 
