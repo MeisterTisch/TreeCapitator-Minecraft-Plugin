@@ -2,6 +2,7 @@ package user.meistertisch.treeCapitator.event;
 
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -91,7 +92,7 @@ public class EventBlockBreak implements Listener {
         // Return if limit will be surpassed
         if (counter.decrementAndGet() < 0) return;
 
-        // Safe block type for later check
+        // Save block type for later check
         Material blockType = block.getType();
 
         block.breakNaturally(tool, true, true);
@@ -107,12 +108,14 @@ public class EventBlockBreak implements Listener {
 
                     // Get speed from config and check in if it's in range; TODO: Fix corner speeds (Too fast with neighbor blocks somehow, will check later)
                     long speed = TreeCapitator.getPlugin().getConfigManager().speed;
-                    speed = Math.clamp(speed, 1, 5);
+                    if(speed == 0){
+                        speed = getDynamicSpeed(tool);
+                    }
 
                     // Calculate distance
                     double distance = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
 
-                    // Calculate delay according to speed value from config; TODO: Give possibility to make speed depending on tool (wooden vs. netherite)
+                    // Calculate delay according to speed value from config
                     long delay = (speed * 2) + (long) (distance * 2.5);
 
                     // Get relatives, check for same type as original block. If same, recursive call of methode with delay for smooth gameplay
@@ -124,6 +127,30 @@ public class EventBlockBreak implements Listener {
                 }
             }
         }
+    }
+
+    private long getDynamicSpeed(ItemStack tool) {
+        if (tool == null || tool.getType().isAir()) return 20;
+
+        long speed;
+
+        switch (tool.getType()) {
+            case NETHERITE_AXE -> speed = 2;
+            case DIAMOND_AXE   -> speed = 4;
+            case IRON_AXE      -> speed = 6;
+            case GOLDEN_AXE    -> speed = 3;
+            case COPPER_AXE    -> speed = 10;
+            case STONE_AXE     -> speed = 12;
+            case WOODEN_AXE    -> speed = 16;
+            default            -> speed = 20;
+        };
+
+        int level = tool.getEnchantmentLevel(Enchantment.EFFICIENCY);
+        double factor = 1.0 - (level * 0.15);
+
+        long finalSpeed = (long) (speed * factor);
+
+        return Math.max(1, finalSpeed);
     }
 
     private void damageItem(Player player, ItemStack tool) {

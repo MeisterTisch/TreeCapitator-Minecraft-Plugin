@@ -21,7 +21,7 @@ onlyAxe: true
 onlySurvival: true
 
 # The speed at which the logs will be destroyed.
-# Value range: 1 (fastest) to 5 (slowest).
+# Value range: 0 (depending on tool), 1 (fastest) to 5 (slowest).
 # Default value: 3
 speed: 3
 

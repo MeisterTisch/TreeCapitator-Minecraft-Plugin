@@ -75,7 +75,7 @@ public class ConfigManager {
             reportInvalid("speed", 3);
             changed = true;
         } else {
-            int i = Math.clamp(config.getInt("speed"), 1, 5);
+            int i = Math.clamp(config.getInt("speed"), 0, 5);
             if(i != config.getInt("speed")) {
                 reportInvalid("speed", 3);
                 changed = true;
