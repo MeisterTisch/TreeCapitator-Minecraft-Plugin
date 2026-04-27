@@ -8,7 +8,9 @@ import org.bukkit.command.TabExecutor;
 import org.jspecify.annotations.NonNull;
 import user.meistertisch.treeCapitator.TreeCapitator;
 import user.meistertisch.treeCapitator.manager.ConfigManager;
+import user.meistertisch.treeCapitator.permission.Permissions;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
@@ -31,21 +33,45 @@ public class TreeCapitatorCommand implements TabExecutor {
 
         switch (args[0].toLowerCase()) {
             case "reload" -> {
+                if(!sender.hasPermission(Permissions.RELOAD)) {
+                    sender.sendMessage(plugin.getLang().getMessage("command.no_permission"));
+                    return true;
+                }
+
                 plugin.getConfigManager().reload();
                 sender.sendMessage(plugin.getLang().getMessage("command.tc.reloaded"));
                 return true;
             }
             case "settings" -> {
+                if(!sender.hasPermission(Permissions.SETTINGS)) {
+                    sender.sendMessage(plugin.getLang().getMessage("command.no_permission"));
+                    return true;
+                }
+
                 Component message = plugin.getLang().getMessage("command.tc.settings.message");
                 message = message.appendNewline().append(plugin.getConfigManager().getAllSettings());
                 sender.sendMessage(message);
                 return true;
             }
             case "toggle" -> {
+                if(!sender.hasPermission(Permissions.TOGGLE)) {
+                    sender.sendMessage(plugin.getLang().getMessage("command.no_permission"));
+                    return true;
+                }
+
                 // TODO: Here toggle
             }
             case "set" -> {
+                if(!sender.hasPermission(Permissions.SET)) {
+                    sender.sendMessage(plugin.getLang().getMessage("command.no_permission"));
+                    return true;
+                }
+
                 handleSet(sender, args);
+                return true;
+            }
+            default -> {
+                sender.sendMessage(plugin.getLang().getMessage("command.invalid_use"));
                 return true;
             }
         }
@@ -327,9 +353,23 @@ public class TreeCapitatorCommand implements TabExecutor {
     @Override
     public List<String> onTabComplete(@NonNull CommandSender sender, @NonNull Command command, @NonNull String alias, String[] args) {
         if (args.length == 1) {
-            return Stream.of("reload", "set", "settings", "toggle")
+            List<String> list = new ArrayList<>();
+
+            if(sender.hasPermission(Permissions.TOGGLE)){
+                list.add("toggle");
+            }
+
+            if(sender.hasPermission(Permissions.ADMIN)){
+                list.addAll(List.of("reload", "set", "settings"));
+            }
+
+            return list.stream()
                     .filter(s -> s.startsWith(args[0].toLowerCase()))
                     .toList();
+        }
+
+        if(!sender.hasPermission(Permissions.ADMIN)){
+            return List.of("");
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("set")) {

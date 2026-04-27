@@ -13,7 +13,39 @@ softdepend:
   - CoreProtect
 
 commands:
-    treecapitator:
-        description: Main command for the plugin.
-        usage: /treecapitator help
-        aliases: [tc, treecap]
+  treecapitator:
+    description: Main command for the plugin.
+    usage: /treecapitator help
+    aliases: [ tc, treecap ]
+
+permission:
+  treeCapitator.*:
+    description: Allows access to all commands and features of the plugin.
+    default: op
+    children:
+      treeCapitator.admin: true
+
+  treeCapitator.admin:
+    description: Allows access to all admin commands and features.
+    default: op
+    children:
+      treeCapitator.admin.reload: true
+      treeCapitator.admin.settings: true
+      treeCapitator.admin.set: true
+
+  treeCapitator.admin.reload:
+    description: Allows reloading the plugin's configuration without restarting the server.
+    default: op
+  treeCapitator.admin.settings:
+    description: Allows access to see the current settings of the plugin.
+    default: op
+  treeCapitator.admin.set:
+    description: Allows changing the plugin's settings via commands or GUI.
+    default: op
+
+  treeCapitator.toggle:
+    description: Allows players to toggle the plugin's features on or off for themselves.
+    default: true
+  treeCapitator.use:
+    description: Allows players to use the main features of the plugin.
+    default: true
