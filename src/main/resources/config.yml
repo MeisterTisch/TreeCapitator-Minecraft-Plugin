@@ -38,7 +38,7 @@ treeDetection:
   enabled: false
   # Sets the mode of the check.
   # Value range: 1 (leaf check), 2 (CoreProtect check)
-  # Note: Tree detection with CoreProtect only works on natural trees. Self-grown trees won't trigger plugin.
+  # Note for second mode: For self-grown trees to be detected, the setting "tree-growth" in CoreProtect's config must be disabled.
   # default value: 1
   mode: 1
   # Whether to check every log or only the first one.

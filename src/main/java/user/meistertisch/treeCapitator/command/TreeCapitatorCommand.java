@@ -387,7 +387,7 @@ public class TreeCapitatorCommand implements TabExecutor {
                             .filter(s -> s.startsWith(args[2].toLowerCase()))
                             .toList();
                 case "speed":
-                    return Stream.of("1", "2", "3", "4", "5")
+                    return Stream.of("0", "1", "2", "3", "4", "5")
                             .filter(s -> s.startsWith(args[2].toLowerCase()))
                             .toList();
                 case "limit":

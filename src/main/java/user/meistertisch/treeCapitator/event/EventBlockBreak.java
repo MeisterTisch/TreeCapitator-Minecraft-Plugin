@@ -147,7 +147,7 @@ public class EventBlockBreak implements Listener {
             case STONE_AXE     -> speed = 12;
             case WOODEN_AXE    -> speed = 16;
             default            -> speed = 20;
-        };
+        }
 
         int level = tool.getEnchantmentLevel(Enchantment.EFFICIENCY);
         double factor = 1.0 - (level * 0.15);
@@ -164,6 +164,17 @@ public class EventBlockBreak implements Listener {
 
         ItemMeta meta = tool.getItemMeta();
         if (meta instanceof Damageable damageable) {
+            // Check Unbreaking enchantment (1 / (level + 1) chance to NOT consume durability)
+            int unbreakingLevel = tool.getEnchantmentLevel(Enchantment.UNBREAKING);
+            if (unbreakingLevel > 0) {
+                // Calculate probability of NOT taking damage
+                double chanceToNotDamage = 1.0 / (unbreakingLevel + 1);
+                // If random is less than chance, skip damage
+                if (Math.random() < chanceToNotDamage) {
+                    return;
+                }
+            }
+
             // Add damage
             damageable.setDamage(damageable.getDamage() + 1);
             tool.setItemMeta(damageable);

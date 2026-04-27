@@ -20,7 +20,7 @@ This project is under active development. My goal is to evolve it from a solid c
 - [X] **Axe check & Durability decreasement** 
 - [X] **Differentiation between natural and player-placed logs** (Preventing abuse/accidents)
 - [X] **Max-Log Limitation**
-- [ ] **Permissions Support** 
+- [X] **Permissions Support** 
 
 ### 🟡 Nice-to-Have
 - [ ] **Ingame Player Toggle** (`/tc toggle` for individual preferences)
