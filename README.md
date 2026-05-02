@@ -27,10 +27,10 @@ This project is under active development. My goal is to evolve it from a solid c
 - [ ] **Visual & Sound Effects**
 - [ ] **Admin GUI Menu** (Manage settings via an in-game interface or in chat)
 - [ ] **Instant Leaf Decay**
-- [ ] **Update Checker & Notifier** (Keep the server up to date via GitHub API)
+- [X] **Update Checker & Notifier** (Keep the server up to date via GitHub API)
 - [ ] **Configurable Block Types** (Support for custom log types)
 - [ ] **Direct Inventory Dropping** (Drop logs directly into the player's inventory instead of the ground)
-- [ ] **Speed Control** (Adjust the speed of tree felling for balance and performance)
+- [X] **Speed Control** (Adjust the speed of tree felling for balance and performance)
 - [ ] **Crouch Option** (Toggle if tree falling should only occur when crouching, or the opposite)
 
 ---

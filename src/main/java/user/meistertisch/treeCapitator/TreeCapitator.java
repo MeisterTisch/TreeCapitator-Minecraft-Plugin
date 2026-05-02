@@ -8,6 +8,7 @@ import user.meistertisch.treeCapitator.command.TreeCapitatorCommand;
 import user.meistertisch.treeCapitator.event.EventBlockBreak;
 import user.meistertisch.treeCapitator.manager.ConfigManager;
 import user.meistertisch.treeCapitator.manager.LanguageManager;
+import user.meistertisch.treeCapitator.manager.UpdateChecker;
 import user.meistertisch.treeCapitator.permission.PermissionRegistry;
 
 public final class TreeCapitator extends JavaPlugin {
@@ -38,7 +39,10 @@ public final class TreeCapitator extends JavaPlugin {
         // Commands
         getCommand("treecapitator").setExecutor(new TreeCapitatorCommand(this));
 
-        getComponentLogger().info(lang.getMessage("plugin_enabled"));
+        // Update Checker
+        UpdateChecker updateChecker = new UpdateChecker(this);
+        updateChecker.registerListener();
+        updateChecker.checkForUpdates();
     }
 
     @Override
