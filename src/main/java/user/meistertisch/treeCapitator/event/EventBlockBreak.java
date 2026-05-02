@@ -10,6 +10,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 import user.meistertisch.treeCapitator.TreeCapitator;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,6 +32,14 @@ public class EventBlockBreak implements Listener {
         }
 
         Player player = event.getPlayer();
+        NamespacedKey key = new NamespacedKey(TreeCapitator.getPlugin(), "treecapitator_enabled");
+        boolean isEnabled = player.getPersistentDataContainer().getOrDefault(key, PersistentDataType.BOOLEAN, true);
+
+        // Did player disable individual preference?
+        if(!isEnabled){
+            player.sendActionBar(TreeCapitator.getPlugin().getLang().getMessage("command.tc.toggle.disabled"));
+            return;
+        }
 
         // Is player in survival
         boolean onlySurvival = TreeCapitator.getPlugin().getConfigManager().onlySurvival;

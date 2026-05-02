@@ -2,9 +2,12 @@ package user.meistertisch.treeCapitator.command;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import org.bukkit.NamespacedKey;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
+import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataType;
 import org.jspecify.annotations.NonNull;
 import user.meistertisch.treeCapitator.TreeCapitator;
 import user.meistertisch.treeCapitator.manager.ConfigManager;
@@ -59,7 +62,8 @@ public class TreeCapitatorCommand implements TabExecutor {
                     return true;
                 }
 
-                // TODO: Here toggle
+                togglePreference(sender);
+                return true;
             }
             case "set" -> {
                 if(!sender.hasPermission(Permissions.SET)) {
@@ -75,8 +79,6 @@ public class TreeCapitatorCommand implements TabExecutor {
                 return true;
             }
         }
-
-        return true;
     }
 
     private void handleSet(CommandSender sender, String[] args) {
@@ -348,6 +350,23 @@ public class TreeCapitatorCommand implements TabExecutor {
                 }
             }
         }
+    }
+
+    private void togglePreference(CommandSender sender) {
+        if(!(sender instanceof Player player)){
+            sender.sendMessage(plugin.getLang().getMessage("command.onlyPlayer"));
+            return;
+        }
+
+        NamespacedKey key = new NamespacedKey(plugin, "treecapitator_enabled");
+        boolean isEnabled = player.getPersistentDataContainer().getOrDefault(key, PersistentDataType.BOOLEAN, true);
+
+        // Toggle
+        player.getPersistentDataContainer().set(key, PersistentDataType.BOOLEAN, !isEnabled);
+        player.sendMessage(plugin.getLang().getMessage(
+                "command.tc.toggle." + (!isEnabled ? "enabled" : "disabled")
+        ));
+
     }
 
     @Override
