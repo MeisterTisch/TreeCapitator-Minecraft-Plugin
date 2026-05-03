@@ -8,8 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import user.meistertisch.treeCapitator.TreeCapitator;
 
@@ -128,6 +126,7 @@ public class EventBlockBreak implements Listener {
         // Mark block as being processed to prevent recursion
         String blockKey = getBlockKey(block);
         PROCESSING_BLOCKS.add(blockKey);
+        EventBlockDropItem.addBlock(block);
 
         block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());
         player.breakBlock(block);

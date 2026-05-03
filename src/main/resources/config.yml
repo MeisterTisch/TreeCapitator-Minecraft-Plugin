@@ -20,6 +20,11 @@ onlyAxe: true
 # default value: true
 onlySurvival: true
 
+# Whether to drop the destroyed logs directly into the player's inventory or to drop them as items in the world.
+# If true, the logs will be added to the player's inventory if there is space. If no space is available, the logs will be dropped as items in the world.
+# Default value: false
+dropToInventory: false
+
 # The speed at which the logs will be destroyed.
 # Value range: 0 (depending on tool), 1 (fastest) to 5 (slowest).
 # Default value: 3

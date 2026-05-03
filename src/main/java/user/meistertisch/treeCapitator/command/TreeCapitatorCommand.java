@@ -91,7 +91,7 @@ public class TreeCapitatorCommand implements TabExecutor {
         String value = args[2];
 
         switch (setting) {
-            case "status", "onlyaxe", "onlysurvival" -> {
+            case "status", "onlyaxe", "onlysurvival", "droptoinventory" -> {
                 if (args.length != 3) {
                     sender.sendMessage(plugin.getLang().getMessage("command.invalid_use"));
                     return;
@@ -103,6 +103,7 @@ public class TreeCapitatorCommand implements TabExecutor {
                     case "status" -> current = cm.enabled;
                     case "onlyaxe" -> current = cm.onlyAxe;
                     case "onlysurvival" -> current = cm.onlySurvival;
+                    case "droptoinventory" -> current = cm.dropToInv;
                     default -> {
                         return;
                     }
@@ -133,6 +134,7 @@ public class TreeCapitatorCommand implements TabExecutor {
                     case "status" -> cm.setEnabled(isEnabling);
                     case "onlyaxe" -> cm.setOnlyAxe(isEnabling);
                     case "onlysurvival" -> cm.setOnlySurvival(isEnabling);
+                    case "droptoinventory" -> cm.setDropToInv(isEnabling);
                     default -> {
                         return;
                     }
@@ -391,7 +393,7 @@ public class TreeCapitatorCommand implements TabExecutor {
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("set")) {
-            return Stream.of("language", "onlyAxe", "onlySurvival", "speed", "limit", "treeDetection", "status")
+            return Stream.of("language", "onlyAxe", "onlySurvival", "dropToInventory", "speed", "limit", "treeDetection", "status")
                     .filter(s -> s.startsWith(args[1]))
                     .toList();
         }
@@ -400,7 +402,7 @@ public class TreeCapitatorCommand implements TabExecutor {
             String setting = args[1].toLowerCase();
 
             switch (setting) {
-                case "onlysurvival", "onlyaxe", "status":
+                case "onlysurvival", "onlyaxe", "status", "droptoinventory":
                     return Stream.of("enable", "disable")
                             .filter(s -> s.startsWith(args[2].toLowerCase()))
                             .toList();

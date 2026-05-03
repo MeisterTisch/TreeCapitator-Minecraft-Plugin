@@ -23,6 +23,7 @@ public class ConfigManager {
     public String language;
     public boolean onlyAxe;
     public boolean onlySurvival;
+    public boolean dropToInv;
     public int speed;
     public int limit;
     public boolean treeDetectionEnabled;
@@ -68,6 +69,11 @@ public class ConfigManager {
 
         if (!config.isBoolean("onlySurvival")) {
             reportInvalid("onlySurvival", true);
+            changed = true;
+        }
+
+        if(!config.isBoolean("dropToInventory")) {
+            reportInvalid("dropToInvalid", false);
             changed = true;
         }
 
@@ -128,6 +134,7 @@ public class ConfigManager {
         this.language = config.getString("language", "en");
         this.onlyAxe = config.getBoolean("onlyAxe", true);
         this.onlySurvival = config.getBoolean("onlySurvival", true);
+        this.dropToInv = config.getBoolean("dropToInventory", false);
         this.speed = config.getInt("speed", 3);
         this.limit = config.getInt("limit", 64);
         this.treeDetectionEnabled = config.getBoolean("treeDetection.enabled", false);
@@ -194,6 +201,7 @@ public class ConfigManager {
         settings.put("language", language);
         settings.put("onlyAxe", onlyAxe);
         settings.put("onlySurvival", onlySurvival);
+        settings.put("dropToInventory", dropToInv);
         settings.put("speed", speed);
         settings.put("limit", limit);
         settings.put("treeDetection enabled", treeDetectionEnabled);
@@ -230,6 +238,11 @@ public class ConfigManager {
     public synchronized void setOnlySurvival(boolean onlySurvival) {
         this.onlySurvival = onlySurvival;
         updateConfig("onlySurvival", onlySurvival);
+    }
+
+    public synchronized void setDropToInv(boolean dropToInv) {
+        this.dropToInv = dropToInv;
+        updateConfig("dropToInventory", dropToInv);
     }
 
     public synchronized void setSpeed(int speed) {

@@ -6,6 +6,7 @@ import user.meistertisch.treeCapitator.api.LogChecker;
 import user.meistertisch.treeCapitator.api.VanillaLogChecker;
 import user.meistertisch.treeCapitator.command.TreeCapitatorCommand;
 import user.meistertisch.treeCapitator.event.EventBlockBreak;
+import user.meistertisch.treeCapitator.event.EventBlockDropItem;
 import user.meistertisch.treeCapitator.manager.ConfigManager;
 import user.meistertisch.treeCapitator.manager.LanguageManager;
 import user.meistertisch.treeCapitator.manager.UpdateChecker;
@@ -35,6 +36,7 @@ public final class TreeCapitator extends JavaPlugin {
 
         // Events
         getServer().getPluginManager().registerEvents(new EventBlockBreak(), this);
+        getServer().getPluginManager().registerEvents(new EventBlockDropItem(), this);
 
         // Commands
         getCommand("treecapitator").setExecutor(new TreeCapitatorCommand(this));
