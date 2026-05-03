@@ -27,7 +27,6 @@ public class TreeCapitatorCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, @NonNull Command command, @NonNull String label, String @NonNull [] args) {
-        // TODO: Set permission check here
 
         if (args.length == 0) {
             // TODO: open GUI here

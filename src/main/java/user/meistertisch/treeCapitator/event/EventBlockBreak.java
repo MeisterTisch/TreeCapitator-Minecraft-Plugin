@@ -13,13 +13,30 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import user.meistertisch.treeCapitator.TreeCapitator;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class EventBlockBreak implements Listener {
+    private static final Set<String> PROCESSING_BLOCKS = new HashSet<>();
+
+    /**
+     * Create a unique key for a block location
+     */
+    private String getBlockKey(Block block) {
+        return block.getWorld().getName() + ":" + block.getX() + "," + block.getY() + "," + block.getZ();
+    }
+
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event){
         if(!TreeCapitator.getPlugin().getConfigManager().enabled) {
+            return;
+        }
+
+        String blockKey = getBlockKey(event.getBlock());
+        if (PROCESSING_BLOCKS.contains(blockKey)) {
+            PROCESSING_BLOCKS.remove(blockKey);
             return;
         }
 
@@ -108,8 +125,11 @@ public class EventBlockBreak implements Listener {
         // Save block type for later check
         Material blockType = block.getType();
 
-        block.breakNaturally(tool, true, true);
-        damageItem(player, tool);
+        // Mark block as being processed to prevent recursion
+        String blockKey = getBlockKey(block);
+        PROCESSING_BLOCKS.add(blockKey);
+
+        player.breakBlock(block);
 
         for (int y = -1; y <= 1; y++) {
             for (int z = -1; z <= 1; z++) {
@@ -164,35 +184,5 @@ public class EventBlockBreak implements Listener {
         long finalSpeed = (long) (speed * factor);
 
         return Math.max(1, finalSpeed);
-    }
-
-    private void damageItem(Player player, ItemStack tool) {
-        if (tool == null || tool.getType().isAir()) {
-            return;
-        }
-
-        ItemMeta meta = tool.getItemMeta();
-        if (meta instanceof Damageable damageable) {
-            // Check Unbreaking enchantment (1 / (level + 1) chance to NOT consume durability)
-            int unbreakingLevel = tool.getEnchantmentLevel(Enchantment.UNBREAKING);
-            if (unbreakingLevel > 0) {
-                // Calculate probability of NOT taking damage
-                double chanceToNotDamage = 1.0 / (unbreakingLevel + 1);
-                // If random is less than chance, skip damage
-                if (Math.random() < chanceToNotDamage) {
-                    return;
-                }
-            }
-
-            // Add damage
-            damageable.setDamage(damageable.getDamage() + 1);
-            tool.setItemMeta(damageable);
-
-            // Item breaks
-            if (damageable.getDamage() >= tool.getType().getMaxDurability()) {
-                player.getInventory().setItemInMainHand(null);
-                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
-            }
-        }
     }
 }
