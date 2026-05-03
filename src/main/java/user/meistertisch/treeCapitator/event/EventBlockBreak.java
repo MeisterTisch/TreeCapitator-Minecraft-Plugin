@@ -129,6 +129,7 @@ public class EventBlockBreak implements Listener {
         String blockKey = getBlockKey(block);
         PROCESSING_BLOCKS.add(blockKey);
 
+        block.getWorld().playEffect(block.getLocation(), Effect.STEP_SOUND, block.getType());
         player.breakBlock(block);
 
         for (int y = -1; y <= 1; y++) {
