@@ -1,7 +1,6 @@
 package user.meistertisch.treeCapitator.manager;
 
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -29,6 +28,10 @@ public class ConfigManager {
     public boolean treeDetectionEnabled;
     public int treeDetectionMode;
     public boolean treeDetectionDeep;
+    public boolean logTypeLog;
+    public boolean logTypeStrippedLog;
+    public boolean logTypeWood;
+    public boolean logTypeStrippedWood;
 
     public ConfigManager(TreeCapitator plugin) {
         this.plugin = plugin;
@@ -114,6 +117,26 @@ public class ConfigManager {
             changed = true;
         }
 
+        if (!config.isBoolean("logType.log")) {
+            reportInvalid("logType.log", true);
+            changed = true;
+        }
+
+        if (!config.isBoolean("logType.strippedLog")) {
+            reportInvalid("logType.strippedLog", true);
+            changed = true;
+        }
+
+        if (!config.isBoolean("logType.wood")) {
+            reportInvalid("logType.wood", true);
+            changed = true;
+        }
+
+        if (!config.isBoolean("logType.strippedWood")) {
+            reportInvalid("logType.strippedWood", true);
+            changed = true;
+        }
+
         if (changed) {
             plugin.saveConfig();
         }
@@ -140,17 +163,23 @@ public class ConfigManager {
         this.treeDetectionEnabled = config.getBoolean("treeDetection.enabled", false);
         this.treeDetectionMode = config.getInt("treeDetection.mode", 1);
         this.treeDetectionDeep = config.getBoolean("treeDetection.deep", true);
+        this.logTypeLog = config.getBoolean("logType.log", true);
+        this.logTypeStrippedLog = config.getBoolean("logType.strippedLog", true);
+        this.logTypeWood = config.getBoolean("logType.wood", true);
+        this.logTypeStrippedWood = config.getBoolean("logType.strippedWood", true);
     }
 
     private void updateConfig(String path, Object value) {
         config.set(path, value);
         plugin.saveConfig();
+        reload();
     }
 
     public Component getAllSettings(){
         Component message = Component.empty();
 
         Map<String, Object> settings = getSettingsMap();
+        System.out.println(settings);
 
         for (Map.Entry<String, Object> entry : settings.entrySet()) {
             String key = entry.getKey();
@@ -207,6 +236,10 @@ public class ConfigManager {
         settings.put("treeDetection enabled", treeDetectionEnabled);
         settings.put("treeDetection mode", getModeName()); // Method to get mode name instead of integer
         settings.put("treeDetection deep", treeDetectionDeep);
+        settings.put("logType log", logTypeLog);
+        settings.put("logType strippedLog", logTypeStrippedLog);
+        settings.put("logType wood", logTypeWood);
+        settings.put("logType strippedWood", logTypeStrippedWood);
         return settings;
     }
 
@@ -270,5 +303,25 @@ public class ConfigManager {
     public synchronized void setTreeDetectionDeep(boolean treeDetectionDeep) {
         this.treeDetectionDeep = treeDetectionDeep;
         updateConfig("treeDetection.deep", treeDetectionDeep);
+    }
+
+    public synchronized void setLogTypeLog(boolean logTypeLog) {
+        this.logTypeLog = logTypeLog;
+        updateConfig("logType.log", logTypeLog);
+    }
+
+    public synchronized void setLogTypeStrippedLog(boolean logTypeStrippedLog) {
+        this.logTypeStrippedLog = logTypeStrippedLog;
+        updateConfig("logType.strippedLog", logTypeStrippedLog);
+    }
+
+    public synchronized void setLogTypeWood(boolean logTypeWood) {
+        this.logTypeWood = logTypeWood;
+        updateConfig("logType.wood", logTypeWood);
+    }
+
+    public synchronized void setLogTypeStrippedWood(boolean logTypeStrippedWood) {
+        this.logTypeStrippedWood = logTypeStrippedWood;
+        updateConfig("logType.strippedWood", logTypeStrippedWood);
     }
 }

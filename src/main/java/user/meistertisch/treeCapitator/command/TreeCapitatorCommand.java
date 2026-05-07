@@ -350,6 +350,64 @@ public class TreeCapitatorCommand implements TabExecutor {
                     ));
                 }
             }
+            case "logtype" -> {
+                if (args.length != 4) {
+                    sender.sendMessage(plugin.getLang().getMessage("command.invalid_use"));
+                    return;
+                }
+                setting = args[2].toLowerCase();
+                value = args[3];
+
+                boolean current;
+
+                switch (setting) {
+                    case "log" -> current = cm.logTypeLog;
+                    case "strippedlog" -> current = cm.logTypeStrippedLog;
+                    case "wood" -> current = cm.logTypeWood;
+                    case "strippedwood" -> current = cm.logTypeStrippedWood;
+                    default -> {
+                        sender.sendMessage(plugin.getLang().getMessage("command.invalid_use"));
+                        return;
+                    }
+                }
+
+                // Not a boolean
+                if (!value.equalsIgnoreCase("enable") && !value.equalsIgnoreCase("disable")) {
+                    sender.sendMessage(plugin.getLang().getMessage(
+                            "command.invalid_input",
+                            Placeholder.unparsed("input", value)
+                    ));
+                    return;
+                }
+
+                boolean isEnabling = value.equalsIgnoreCase("enable");
+
+                // Same status
+                if (isEnabling == current) {
+                    sender.sendMessage(plugin.getLang().getMessage(
+                            "command.tc.set.already_set",
+                            Placeholder.unparsed("value", value),
+                            Placeholder.unparsed("setting", "logType." + setting)
+                    ));
+                    return;
+                }
+
+                switch (setting) {
+                    case "log" -> cm.setLogTypeLog(isEnabling);
+                    case "strippedlog" -> cm.setLogTypeStrippedLog(isEnabling);
+                    case "wood" -> cm.setLogTypeWood(isEnabling);
+                    case "strippedwood" -> cm.setLogTypeStrippedWood(isEnabling);
+                    default -> {
+                        sender.sendMessage(plugin.getLang().getMessage("command.invalid_use"));
+                        return;
+                    }
+                }
+                sender.sendMessage(plugin.getLang().getMessage(
+                        "command.tc.set.success",
+                        Placeholder.unparsed("value", value),
+                        Placeholder.unparsed("setting", "logType." + setting)
+                ));
+            }
         }
     }
 
@@ -393,7 +451,7 @@ public class TreeCapitatorCommand implements TabExecutor {
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("set")) {
-            return Stream.of("language", "onlyAxe", "onlySurvival", "dropToInventory", "speed", "limit", "treeDetection", "status")
+            return Stream.of("language", "onlyAxe", "onlySurvival", "dropToInventory", "speed", "limit", "treeDetection", "status", "logType")
                     .filter(s -> s.startsWith(args[1]))
                     .toList();
         }
@@ -418,6 +476,10 @@ public class TreeCapitatorCommand implements TabExecutor {
                     return Stream.of("mode", "deep", "status")
                             .filter(s -> s.startsWith(args[2].toLowerCase()))
                             .toList();
+                case "logtype":
+                    return Stream.of("log", "strippedLog", "wood",  "strippedWood")
+                            .filter(s -> s.startsWith(args[2].toLowerCase()))
+                            .toList();
                 case "language":
                     return plugin.getLang().getLanguages().stream()
                             .filter(s -> s.startsWith(args[2].toLowerCase()))
@@ -425,21 +487,26 @@ public class TreeCapitatorCommand implements TabExecutor {
             }
         }
 
-        if (args.length == 4 && args[1].equalsIgnoreCase("treeDetection")) {
-            String subSetting = args[2].toLowerCase();
+        if(args.length == 4){
+            if (args[1].equalsIgnoreCase("treeDetection")) {
+                String subSetting = args[2].toLowerCase();
 
-            if (subSetting.equals("mode")) {
-                return Stream.of("leaf", "coreprotect")
-                        .filter(s -> s.startsWith(args[3].toLowerCase()))
-                        .toList();
-            }
-            if (subSetting.equals("deep") || subSetting.equals("status")) {
+                if (subSetting.equals("mode")) {
+                    return Stream.of("leaf", "coreprotect")
+                            .filter(s -> s.startsWith(args[3].toLowerCase()))
+                            .toList();
+                }
+                if (subSetting.equals("deep") || subSetting.equals("status")) {
+                    return Stream.of("enable", "disable")
+                            .filter(s -> s.startsWith(args[3].toLowerCase()))
+                            .toList();
+                }
+            } else if (args[1].equalsIgnoreCase("logType")) {
                 return Stream.of("enable", "disable")
                         .filter(s -> s.startsWith(args[3].toLowerCase()))
                         .toList();
             }
         }
-
         return Collections.emptyList();
     }
 }

@@ -49,3 +49,11 @@ treeDetection:
   # Whether to check every log or only the first one.
   # Default value: true
   deep: true
+
+# Configure what type of logs should be affected by the plugin.
+# each category includes: oak, birch, spruce, jungle, dark oak, acacia, cherry, pale oak, mangrove, warped and crimson stem/hyphae.
+logType:
+  log: true
+  strippedLog: true
+  wood: true
+  strippedWood: true

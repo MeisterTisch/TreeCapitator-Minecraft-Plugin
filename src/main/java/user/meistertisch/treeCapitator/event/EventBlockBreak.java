@@ -19,6 +19,20 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class EventBlockBreak implements Listener {
     private static final Set<String> PROCESSING_BLOCKS = new HashSet<>();
 
+    //each category includes: oak, birch, spruce, jungle, dark oak, acacia, cherry, pale oak, mangrove, warped and crimson stem/hyphae.
+    private static final Set<Material> LOGS = Set.of(
+            Material.OAK_LOG, Material.BIRCH_LOG, Material.SPRUCE_LOG, Material.JUNGLE_LOG, Material.DARK_OAK_LOG, Material.ACACIA_LOG, Material.CHERRY_LOG, Material.PALE_OAK_LOG, Material.MANGROVE_LOG, Material.WARPED_STEM, Material.CRIMSON_STEM
+    );
+    private static final Set<Material> STRIPPED_LOGS = Set.of(
+            Material.STRIPPED_OAK_LOG, Material.STRIPPED_BIRCH_LOG, Material.STRIPPED_SPRUCE_LOG, Material.STRIPPED_JUNGLE_LOG, Material.STRIPPED_DARK_OAK_LOG, Material.STRIPPED_ACACIA_LOG, Material.STRIPPED_CHERRY_LOG, Material.STRIPPED_PALE_OAK_LOG, Material.STRIPPED_MANGROVE_LOG, Material.STRIPPED_WARPED_STEM, Material.STRIPPED_CRIMSON_STEM
+    );
+    private static final Set<Material> WOOD = Set.of(
+        Material.OAK_WOOD, Material.BIRCH_WOOD, Material.SPRUCE_WOOD, Material.JUNGLE_WOOD, Material.DARK_OAK_WOOD, Material.ACACIA_WOOD, Material.CHERRY_WOOD, Material.PALE_OAK_WOOD, Material.MANGROVE_WOOD, Material.WARPED_HYPHAE, Material.CRIMSON_HYPHAE
+    );
+    private static final Set<Material> STRIPPED_WOOD = Set.of(
+        Material.STRIPPED_OAK_WOOD, Material.STRIPPED_BIRCH_WOOD, Material.STRIPPED_SPRUCE_WOOD, Material.STRIPPED_JUNGLE_WOOD, Material.STRIPPED_DARK_OAK_WOOD, Material.STRIPPED_ACACIA_WOOD, Material.STRIPPED_CHERRY_WOOD, Material.STRIPPED_PALE_OAK_WOOD, Material.STRIPPED_MANGROVE_WOOD, Material.STRIPPED_WARPED_HYPHAE, Material.STRIPPED_CRIMSON_HYPHAE
+    );
+
     /**
      * Create a unique key for a block location
      */
@@ -41,10 +55,8 @@ public class EventBlockBreak implements Listener {
         Block block = event.getBlock();
         Material blockType = block.getType();
 
-        // Is block a log?
-        if (!Tag.LOGS.isTagged(blockType)) {
-            return;
-        }
+        // Is block a part of enabled log type?
+        if(!isLogTypeAllowed(blockType)) return;
 
         Player player = event.getPlayer();
         NamespacedKey key = new NamespacedKey(TreeCapitator.getPlugin(), "treecapitator_enabled");
@@ -91,6 +103,7 @@ public class EventBlockBreak implements Listener {
         AtomicInteger counter = new AtomicInteger(limit);
         destroyBlock(player, block, tool, counter, true);
     }
+
 
     private void destroyBlock(Player player, Block block, ItemStack tool, AtomicInteger counter, boolean isFirstBlock){
         // Return if player switched tool during the process
@@ -184,5 +197,25 @@ public class EventBlockBreak implements Listener {
         long finalSpeed = (long) (speed * factor);
 
         return Math.max(1, finalSpeed);
+    }
+
+    private boolean isLogTypeAllowed(Material blockType) {
+        if(TreeCapitator.getPlugin().getConfigManager().logTypeLog && LOGS.contains(blockType)){
+            return true;
+        }
+
+        if(TreeCapitator.getPlugin().getConfigManager().logTypeStrippedLog && STRIPPED_LOGS.contains(blockType)){
+            return true;
+        }
+
+        if(TreeCapitator.getPlugin().getConfigManager().logTypeWood && WOOD.contains(blockType)){
+            return true;
+        }
+
+        if(TreeCapitator.getPlugin().getConfigManager().logTypeStrippedWood && STRIPPED_WOOD.contains(blockType)){
+            return true;
+        }
+
+        return false;
     }
 }
